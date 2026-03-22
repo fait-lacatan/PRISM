@@ -2,13 +2,15 @@ import yaml
 import os
 from pathlib import Path
 from types import SimpleNamespace
-class ConfigurationError(Exception):
-    pass
+from .exceptions import ConfigurationError
 
+# Root is "Capstone/"
 import sys
 if getattr(sys, 'frozen', False):
+    # If frozen (PyInstaller), ROOT_DIR is where the executable lives
     ROOT_DIR = Path(sys.executable).parent
 else:
+    # If script, parent of 'core/' is 'Capstone/'
     ROOT_DIR = Path(__file__).parent.parent 
 
 class Settings:
@@ -31,22 +33,28 @@ class Settings:
         if module in self._cache: 
             return self._cache[module]
         
+        # Map logical module names to physical directories if they differ
         module_map = {
-            "network": "blockchain", # backend.py identifies it as 'network', file is in 'blockchain/'
+            "network": "blockchain",  # backend.py identifies it as 'network', file is in 'blockchain/'
         }
         directory = module_map.get(module, module)
         
+        # Auto-resolve path: ROOT / directory / master.yaml
         path = ROOT_DIR / directory / "master.yaml"
         
         if not path.exists():
+            # Fallback for centralized config or other patterns if needed
+            # For now, strict module-based config
             raise ConfigurationError(f"Configuration not found for module '{module}' at {path}")
 
         try:
             with open(path, "r") as f:
                 raw_cfg = yaml.safe_load(f) or {}
                 
+            # Perform path resolution on the raw dict
             resolved_cfg = self._resolve_paths(raw_cfg)
             
+            # Convert to SimpleNamespace for dot-notation access
             namespace_cfg = self._to_namespace(resolved_cfg)
             self._cache[module] = namespace_cfg
             return namespace_cfg
@@ -62,6 +70,8 @@ class Settings:
                 if isinstance(v, (dict, list)):
                     new_cfg[k] = self._resolve_paths(v)
                 elif isinstance(k, str) and (k.endswith("_path") or k.endswith("_file") or k == "enrollments" or k == "keys"):
+                    # Heuristic: if key implies a path, resolve it
+                    # Check if it's already absolute
                     if v and isinstance(v, str):
                         path_obj = Path(v)
                         if not path_obj.is_absolute():

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 from instrumentation import logger_instance as instr
 
-from core.exceptions import HardwareError
+from core.exceptions import InfrastructureError
 from core.settings import sys_config
                       
 from sensor import FingerprintSensor

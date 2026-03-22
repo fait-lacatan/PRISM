@@ -49,3 +49,4 @@ node_modules/
 # Docker data
 storage/ipfs_data/
 storage/ipfs_staging/
+core/device_key.py
