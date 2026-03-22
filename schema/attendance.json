@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "PRISM Faculty Biometric VC",
+    "type": "object",
+    "properties": {
+        "issuer": {
+            "type": "string",
+            "description": "DID of the Kiosk/Agent"
+        },
+        "issuanceDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "credentialSubject": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "did:ethr:<address>"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "biometricBinding": {
+                    "type": "object",
+                    "properties": {
+                        "method": {
+                            "const": "Bimodal-Hierarchical"
+                        },
+                        "faceMatchDistance": {
+                            "type": "number"
+                        },
+                        "vaultReleaseStatus": {
+                            "type": "boolean"
+                        },
+                        "proofHash": {
+                            "type": "string",
+                            "description": "SHA-256 of the bimodal match event"
+                        }
+                    },
+                    "required": [
+                        "method",
+                        "proofHash"
+                    ]
+                }
+            },
+            "required": [
+                "id",
+                "user_id",
+                "biometricBinding"
+            ]
+        },
+        "proof": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "const": "EcdsaSecp256k1Signature2019"
+                },
+                "signatureValue": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

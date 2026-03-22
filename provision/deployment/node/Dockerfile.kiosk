@@ -1,0 +1,56 @@
+# Dockerfile.kiosk (Source Edition)
+# Runs the Kiosk Application directly from Python Source
+# Requires X11 socket sharing for GUI
+
+FROM python:3.11-slim
+
+# Install Runtime Dependencies
+# - chromium: For Eel GUI
+# - libgl1/libglib2.0: For OpenCV
+# - x11-apps: For X11 testing/utils
+# - curl: For healthchecks
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgbm1 \
+    libnss3 \
+    libasound2 \
+    libxss1 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    x11-apps \
+    curl \
+    python3-tk \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install CPU-Only PyTorch (Lightweight)
+RUN pip install --no-cache-dir torch==2.2.2 torchvision==0.17.2 --index-url https://download.pytorch.org/whl/cpu
+
+# Install Python Deps
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+# Ensure strict versions if needed, or rely on requirements.txt
+
+# Copy Source Code
+COPY . .
+
+# Create Storage Dirs
+RUN mkdir -p /app/storage/keys /app/storage/biometrics
+
+# Environment Defaults
+ENV PRISM_HOST=0.0.0.0
+ENV PRISM_PORT=8090
+ENV PYTHONUNBUFFERED=1
+
+# Expose Port
+EXPOSE 8090
+
+# Run the App (Source)
+CMD ["python", "kiosk.py"]

@@ -1,0 +1,159 @@
+
+services:
+  quorum:
+    image: quorumengineering/quorum:latest
+    container_name: quorum-node
+    restart: always
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+      - "30303:30303"
+    environment:
+      - PRIVATE_CONFIG=ignore 
+      - NODE_KEY_HEX=${NODE_KEY_HEX}
+      - STATIC_NODES_B64=${STATIC_NODES_B64}
+    volumes:
+      - quorum_data:/data
+      - ./genesis.json:/data/genesis.json
+    entrypoint: /bin/sh
+    command:
+      - "-c"
+      - |
+        mkdir -p /data/geth
+        echo "$NODE_KEY_HEX" > /data/geth/nodekey
+        echo "$STATIC_NODES_B64" | base64 -d > /data/static-nodes.json
+
+        if [ ! -d /data/geth/chaindata ]; then
+          geth --datadir /data init /data/genesis.json
+        fi
+
+        geth --datadir /data \
+          --nodekeyhex "$NODE_KEY_HEX" \
+          --nodiscover \
+          --nat extip:${HOST_IP} \
+          --networkid 1337 \
+          --istanbul.blockperiod 2 \
+          --mine \
+          --miner.threads 1 \
+          --syncmode full \
+          --rpc.gascap 0 \
+          --http \
+          --http.addr 0.0.0.0 \
+          --http.port 8545 \
+          --http.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft \
+          --http.vhosts "*" \
+          --ws \
+          --ws.addr 0.0.0.0 \
+          --ws.port 8546 \
+          --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft \
+          --ws.origins "*" \
+          --allow-insecure-unlock \
+          --ipcdisable \
+          --emitcheckpoints
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+    cpuset: "3"
+
+  ipfs:
+    image: ipfs/kubo:v0.29.0
+    container_name: ipfs-node
+    restart: always
+    ports:
+      - "4001:4001"
+      - "4001:4001/udp"
+      - "5001:5001"
+      - "8080:8080"
+    environment:
+      - LIBP2P_FORCE_PNET=1
+      - SWARM_KEY_B64=${SWARM_KEY_B64}
+    volumes:
+      - ipfs_data:/data/ipfs
+    entrypoint: /bin/sh
+    command:
+      - "-c"
+      - |
+        ipfs config profile apply lowpower
+        ipfs config profile apply local-discovery
+
+        mkdir -p /data/ipfs
+        echo "$SWARM_KEY_B64" | base64 -d > /data/ipfs/swarm.key
+
+        if [ ! -f /data/ipfs/config ]; then
+          ipfs init --profile server
+        fi
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+        ipfs config --json Gateway.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+        ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+        ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
+
+        ipfs bootstrap rm --all
+        ipfs config --json AutoConf.Enabled false
+        ipfs daemon
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    cpuset: "1"
+
+  ai-service:
+    image: kiosk:latest
+    build:
+      context: ../../../
+      dockerfile: provision/deployment/node/Dockerfile.kiosk
+    container_name: validator-ai
+    restart: always
+    ports:
+      - "8090:8090"
+    environment:
+      - PRISM_RPC=http://quorum-node:8545
+      - PRISM_IPFS=/dns/ipfs-node/tcp/5001
+      - PRISM_HOST=0.0.0.0
+      - PRISM_PORT=8090
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ../../../storage:/app/storage
+      - ../../../blockchain/master.yaml:/app/blockchain/master.yaml:ro
+      - ../../../attendance.db:/app/attendance.db
+      - ../../../kiosk.py:/app/kiosk.py
+      - ../../../backend.py:/app/backend.py
+      - ../../../sensor.py:/app/sensor.py
+      - ../../../instrumentation.py:/app/instrumentation.py
+      - ../../../identity_agent.py:/app/identity_agent.py
+      - ../../../indexer.py:/app/indexer.py
+      - ../../../web-react/dist:/app/web-react/dist
+      - ../../../reference/fplib/fpmain.py:/app/reference/fplib/fpmain.py
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /proc:/host/proc:ro 
+    privileged: true
+    devices:
+       - "/dev/video0:/dev/video0"
+       - "/dev/video1:/dev/video1"
+       - "/dev/ttyUSB0:/dev/ttyUSB0"
+       - "/dev/ttyUSB1:/dev/ttyUSB1" 
+    depends_on:
+      - quorum
+      - ipfs
+    cpuset: "2,3"
+
+  nginx:
+    image: nginx:alpine
+    container_name: validator-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./secrets/certs:/etc/nginx/certs:ro
+    depends_on:
+      - quorum
+      - ipfs
+
+volumes:
+  quorum_data:
+  ipfs_data:

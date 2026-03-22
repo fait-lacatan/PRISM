@@ -1,0 +1,209 @@
+networks:
+  prism_net:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.16.250.0/24
+services:
+  ipfs1:
+    command:
+    - -c
+    - if [ ! -f /data/ipfs/config ]; then ipfs init --profile server; ipfs config
+      --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'; ipfs config --json
+      AutoConf.Enabled false; ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001; ipfs
+      config Addresses.Gateway /ip4/0.0.0.0/tcp/8080; fi; ipfs bootstrap rm --all;
+      ipfs daemon
+    container_name: sim-ipfs-1
+    entrypoint: /bin/sh
+    environment: 
+    - LIBP2P_FORCE_PNET=1
+    image: ipfs/kubo:latest
+    networks:
+      prism_net: {}
+    ports:
+    - 5001:5001
+    - 8080:8080
+    volumes:
+    - sim_ipfs_data_1:/data/ipfs
+    - ./swarm.key:/data/ipfs/swarm.key
+  ipfs2:
+    command:
+    - -c
+    - if [ ! -f /data/ipfs/config ]; then ipfs init --profile server; ipfs config
+      --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'; ipfs config --json
+      AutoConf.Enabled false; ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001; ipfs
+      config Addresses.Gateway /ip4/0.0.0.0/tcp/8080; fi; ipfs bootstrap rm --all;
+      ipfs daemon
+    container_name: sim-ipfs-2
+    entrypoint: /bin/sh
+    environment:
+    - LIBP2P_FORCE_PNET=1
+    image: ipfs/kubo:latest
+    networks:
+      prism_net: {}
+    ports:
+    - 5002:5001
+    - 8081:8080
+    volumes:
+    - sim_ipfs_data_2:/data/ipfs
+    - ./swarm.key:/data/ipfs/swarm.key
+  ipfs3:
+    command:
+    - -c
+    - if [ ! -f /data/ipfs/config ]; then ipfs init --profile server; ipfs config
+      --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'; ipfs config --json
+      AutoConf.Enabled false; ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001; ipfs
+      config Addresses.Gateway /ip4/0.0.0.0/tcp/8080; fi; ipfs bootstrap rm --all;
+      ipfs daemon
+    container_name: sim-ipfs-3
+    entrypoint: /bin/sh
+    environment:
+    - LIBP2P_FORCE_PNET=1
+    image: ipfs/kubo:latest
+    networks:
+      prism_net: {}
+    ports:
+    - 5003:5001
+    - 8082:8080
+    volumes:
+    - sim_ipfs_data_3:/data/ipfs
+    - ./swarm.key:/data/ipfs/swarm.key
+  ipfs4:
+    command:
+    - -c
+    - if [ ! -f /data/ipfs/config ]; then ipfs init --profile server; ipfs config
+      --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'; ipfs config --json
+      AutoConf.Enabled false; ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001; ipfs
+      config Addresses.Gateway /ip4/0.0.0.0/tcp/8080; fi; ipfs bootstrap rm --all;
+      ipfs daemon
+    container_name: sim-ipfs-4
+    entrypoint: /bin/sh
+    environment:
+    - LIBP2P_FORCE_PNET=1
+    image: ipfs/kubo:latest
+    networks:
+      prism_net: {}
+    ports:
+    - 5004:5001
+    - 8083:8080
+    volumes:
+    - sim_ipfs_data_4:/data/ipfs
+    - ./swarm.key:/data/ipfs/swarm.key
+  quorum1:
+    command:
+    - -c
+    - if [ ! -d /data/geth/chaindata ]; then geth --datadir /data init /data/genesis.json;
+      fi && geth --datadir /data --nodiscover --nat extip:172.16.250.11 --networkid
+      1337 --istanbul.blockperiod 2 --mine --miner.threads 1 --miner.etherbase 0x0000000000000000000000000000000000000000
+      --syncmode full --rpc.gascap 0 --http --http.addr 0.0.0.0 --http.port 8545 --http.api
+      admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft --http.vhosts '*'
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft
+      --ws.origins '*' --allow-insecure-unlock --ipcdisable --emitcheckpoints
+    container_name: sim-quorum-1
+    entrypoint: /bin/sh
+    environment:
+    - PRIVATE_CONFIG=ignore
+    hostname: quorum1
+    image: quorumengineering/quorum:latest
+    networks:
+      prism_net:
+        ipv4_address: 172.16.250.11
+    ports:
+    - 8545:8545
+    - 8555:8546
+    volumes:
+    - sim_quorum_data_1:/data
+    - ./static-nodes.json:/data/static-nodes.json
+    - ./nodekeys/nodekey1:/data/geth/nodekey
+    - ../../blockchain/genesis.json:/data/genesis.json
+  quorum2:
+    command:
+    - -c
+    - if [ ! -d /data/geth/chaindata ]; then geth --datadir /data init /data/genesis.json;
+      fi && geth --datadir /data --nodiscover --nat extip:172.16.250.12 --networkid
+      1337 --istanbul.blockperiod 2 --mine --miner.threads 1 --miner.etherbase 0x0000000000000000000000000000000000000000
+      --syncmode full --rpc.gascap 0 --http --http.addr 0.0.0.0 --http.port 8545 --http.api
+      admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft --http.vhosts '*'
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft
+      --ws.origins '*' --allow-insecure-unlock --ipcdisable --emitcheckpoints
+    container_name: sim-quorum-2
+    entrypoint: /bin/sh
+    environment:
+    - PRIVATE_CONFIG=ignore
+    hostname: quorum2
+    image: quorumengineering/quorum:latest
+    networks:
+      prism_net:
+        ipv4_address: 172.16.250.12
+    ports:
+    - 8546:8545
+    - 8556:8546
+    volumes:
+    - sim_quorum_data_2:/data
+    - ./static-nodes.json:/data/static-nodes.json
+    - ./nodekeys/nodekey2:/data/geth/nodekey
+    - ../../blockchain/genesis.json:/data/genesis.json
+  quorum3:
+    command:
+    - -c
+    - if [ ! -d /data/geth/chaindata ]; then geth --datadir /data init /data/genesis.json;
+      fi && geth --datadir /data --nodiscover --nat extip:172.16.250.13 --networkid
+      1337 --istanbul.blockperiod 2 --mine --miner.threads 1 --miner.etherbase 0x0000000000000000000000000000000000000000
+      --syncmode full --rpc.gascap 0 --http --http.addr 0.0.0.0 --http.port 8545 --http.api
+      admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft --http.vhosts '*'
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft
+      --ws.origins '*' --allow-insecure-unlock --ipcdisable --emitcheckpoints
+    container_name: sim-quorum-3
+    entrypoint: /bin/sh
+    environment:
+    - PRIVATE_CONFIG=ignore
+    hostname: quorum3
+    image: quorumengineering/quorum:latest
+    networks:
+      prism_net:
+        ipv4_address: 172.16.250.13
+    ports:
+    - 8547:8545
+    - 8557:8546
+    volumes:
+    - sim_quorum_data_3:/data
+    - ./static-nodes.json:/data/static-nodes.json
+    - ./nodekeys/nodekey3:/data/geth/nodekey
+    - ../../blockchain/genesis.json:/data/genesis.json
+  quorum4:
+    command:
+    - -c
+    - if [ ! -d /data/geth/chaindata ]; then geth --datadir /data init /data/genesis.json;
+      fi && geth --datadir /data --nodiscover --nat extip:172.16.250.14 --networkid
+      1337 --istanbul.blockperiod 2 --mine --miner.threads 1 --miner.etherbase 0x0000000000000000000000000000000000000000
+      --syncmode full --rpc.gascap 0 --http --http.addr 0.0.0.0 --http.port 8545 --http.api
+      admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft --http.vhosts '*'
+      --ws --ws.addr 0.0.0.0 --ws.port 8546 --ws.api admin,eth,debug,miner,net,txpool,personal,web3,istanbul,qbft
+      --ws.origins '*' --allow-insecure-unlock --ipcdisable --emitcheckpoints
+    container_name: sim-quorum-4
+    entrypoint: /bin/sh
+    environment:
+    - PRIVATE_CONFIG=ignore
+    hostname: quorum4
+    image: quorumengineering/quorum:latest
+    networks:
+      prism_net:
+        ipv4_address: 172.16.250.14
+    ports:
+    - 8548:8545
+    - 8558:8546
+    volumes:
+    - sim_quorum_data_4:/data
+    - ./static-nodes.json:/data/static-nodes.json
+    - ./nodekeys/nodekey4:/data/geth/nodekey
+    - ../../blockchain/genesis.json:/data/genesis.json
+
+volumes:
+  sim_ipfs_data_1: {}
+  sim_ipfs_data_2: {}
+  sim_ipfs_data_3: {}
+  sim_ipfs_data_4: {}
+  sim_quorum_data_1: {}
+  sim_quorum_data_2: {}
+  sim_quorum_data_3: {}
+  sim_quorum_data_4: {}

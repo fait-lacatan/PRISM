@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "PRISM User Profile",
+    "type": "object",
+    "properties": {
+        "identity": {
+            "type": "object",
+            "properties": {
+                "did": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "college": {
+                    "type": "string"
+                },
+                "department": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "did",
+                "name"
+            ]
+        },
+        "security": {
+            "type": "object",
+            "properties": {
+                "fingerprint_vault": {
+                    "type": "object",
+                    "properties": {
+                        "helper": {
+                            "type": "string",
+                            "description": "Hex encoded syndrome"
+                        },
+                        "key_hash": {
+                            "type": "string",
+                            "description": "SHA256 of k_v"
+                        },
+                        "indices": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        "debug_anchor": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "required": [
+                        "helper",
+                        "key_hash"
+                    ]
+                },
+                "encrypted_keys": {
+                    "type": "string",
+                    "description": "AES(k_v, k_s)"
+                },
+                "face_template": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "description": "Cancelable template (safe-ish public if key is strong)"
+                }
+            },
+            "required": [
+                "fingerprint_vault",
+                "encrypted_keys",
+                "face_template"
+            ]
+        },
+        "meta": {
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        }
+    },
+    "required": [
+        "identity",
+        "security"
+    ]
+}

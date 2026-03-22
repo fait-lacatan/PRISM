@@ -1,0 +1,51 @@
+# PRISM Monorepo
+# ===============
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Keys & secrets (NEVER commit these)
+*.key
+*.pem
+storage/keys/
+
+# Databases
+*.db
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Model weights (too large for git)
+weights/*.pth
+weights/*.pt
+weights/*.onnx
+reference/*/ckpts/
+
+# Node modules
+node_modules/
+
+# Docker data
+storage/ipfs_data/
+storage/ipfs_staging/

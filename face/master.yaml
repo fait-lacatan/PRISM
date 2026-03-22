@@ -1,0 +1,30 @@
+system:
+  camera_index: 0
+
+detect:
+  score_thr: 0.8
+  min_face_size: 20
+  thresholds: [0.6, 0.7, 0.7]
+
+align:
+  name: similarity_transform
+  output_size: 224
+
+pad:
+  model_path: reference/CFPAD/ckpts/omic.pth
+  tau: 8.529752e-06
+
+embedder:
+  # arch: InceptionResNet
+  arch: SecureEfficientNet
+  backend: pytorch
+  input_size: 224
+  embedding_dim: 128
+  key_dim: 100
+  model_path: weights/FINETUNE_EFFNET_5.pth
+  preproc: imagenet 
+  thresh: 0.007924661855448007
+
+storage:
+  enrollments: storage/biometrics
+  keys: storage/keys
