@@ -98,7 +98,7 @@ PRISM builds upon the following open-source projects for its biometric processin
 | **CF-PAD** | [meilfang/CF-PAD](https://github.com/meilfang/CF-PAD) | MixStyle Residual Causal model for presentation attack detection |
 | **JIPNet** | [XiongjunGuan/JIPNet](https://github.com/XiongjunGuan/JIPNet) | DeepPrint and RidgeNet architectures for fingerprint feature extraction |
 | **fplib** | [Ribin-Baby/fplib-GT521Fx2](https://github.com/Ribin-Baby/fplib-GT521Fx2) | GT-521Fx2 fingerprint sensor module interface and minutiae extraction |
-
+| **SecureTL** | [jtrpinto/SecureTL](https://github.com/jtrpinto/SecureTL) | Facial embedding loss function |
 ## License
 
 Apache License 2.0
