@@ -5,6 +5,10 @@ on:
     branches: [ discovery-app ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true  # cancels the older run in favour of the newer one
+  
 jobs:
   build_windows:
     runs-on: windows-latest
