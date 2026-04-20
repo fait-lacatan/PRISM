@@ -1,0 +1,35 @@
+name: Windows Release
+
+on:
+  push:
+    branches: [ discovery-app ]
+  workflow_dispatch:
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Get Dependencies
+      run: flutter pub get
+
+    - name: Build Windows
+      run: flutter build windows --release
+
+    - name: Compile Inno Setup Script
+      uses: robmikh/innosetup-action@v1
+      with:
+        path: windows/prism_installer.iss
+
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: Discover-PRISM-Windows-Installer
+        path: build/windows/installer/Discover_PRISM_Setup.exe
