@@ -58,7 +58,7 @@ class _PrototypeExplorerTemplateState extends State<PrototypeExplorerTemplate> {
           if (!mounted) return;
           for (int r = 0; r < _rows!; r++) {
             for (int c = 0; c < _cols!; c++) {
-              precacheImage(AssetImage(_getFramePath(r, c)), context);
+              precacheImage(ResizeImage(AssetImage(_getFramePath(r, c)), width: 600), context);
             }
           }
         });
@@ -158,6 +158,7 @@ class _PrototypeExplorerTemplateState extends State<PrototypeExplorerTemplate> {
                   _getFramePath(_rowIndex, _colIndex),
                   fit: BoxFit.contain,
                   gaplessPlayback: true,
+                  cacheWidth: 600,
                 ),
                 
                 // Hint pill at bottom
