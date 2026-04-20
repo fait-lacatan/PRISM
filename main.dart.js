@@ -101419,7 +101419,7 @@ return s+"["+this.b+".."+A.l(r===9007199254740991?"*":r)+"]"}}
 A.aqP.prototype={
 aed(a){$.aTS().q(0,this,a)}}
 A.Wh.prototype={
-kE(a,b){return new A.z3(b.m4($.b91(),t.aq),"PRISM Museum",A.aYX(),A.aYX(),B.F8,!1,null)}}
+kE(a,b){return new A.z3(b.m4($.b91(),t.aq),"Discover PRISM",A.aYX(),A.aYX(),B.F8,!1,null)}}
 A.aTe.prototype={
 $1(a){return new A.zc()},
 $S:660}
