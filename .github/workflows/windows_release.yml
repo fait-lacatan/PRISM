@@ -21,6 +21,19 @@ jobs:
       with:
         channel: 'stable'
 
+    - name: Create missing directories for assets
+      run: |
+        mkdir -p assets/fonts
+        mkdir -p assets/data
+        mkdir -p assets/images/process
+        mkdir -p assets/images/people
+        # Flutter requires at least one file or the directory to exist for asset resolution
+        touch assets/fonts/.gitkeep
+        touch assets/data/.gitkeep
+        touch assets/images/process/.gitkeep
+        touch assets/images/people/.gitkeep
+      shell: bash
+
     - name: Get Dependencies
       run: flutter pub get
 
