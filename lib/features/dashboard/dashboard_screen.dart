@@ -117,9 +117,8 @@ class DashboardScreen extends ConsumerWidget {
       runSpacing: 12,
       children: [
         FilledButton.icon(
-          onPressed: () async {
-            final Uri url = Uri.parse('https://github.com/fait-lacatan/PRISM');
-            if (!await launchUrl(url)) debugPrint('Could not launch $url');
+          onPressed: () {
+            launchUrl(Uri.parse('https://github.com/fait-lacatan/PRISM'));
           },
           icon: const Icon(Icons.code, size: 18),
           label: const Text('View Source'),
@@ -130,9 +129,8 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         OutlinedButton.icon(
-          onPressed: () async {
-            final Uri url = Uri.parse('https://drive.google.com/file/d/1totQOAYRTH-1-jOY72Ybk-mRpKMAkrGz/view?usp=sharing');
-            if (!await launchUrl(url)) debugPrint('Could not launch $url');
+          onPressed: () {
+            launchUrl(Uri.parse('https://drive.google.com/file/d/1totQOAYRTH-1-jOY72Ybk-mRpKMAkrGz/view?usp=sharing'));
           },
           icon: const Icon(Icons.picture_as_pdf, size: 18),
           label: const Text('Read Paper'),
