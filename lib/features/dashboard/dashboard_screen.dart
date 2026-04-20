@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -116,11 +117,9 @@ class DashboardScreen extends ConsumerWidget {
       runSpacing: 12,
       children: [
         FilledButton.icon(
-          onPressed: () {
-            Process.run('open', ['https://github.com/fait-lacatan/PRISM']).catchError((e) {
-              debugPrint('Could not launch GitHub: \$e');
-              return ProcessResult(0, 1, '', '');
-            });
+          onPressed: () async {
+            final Uri url = Uri.parse('https://github.com/fait-lacatan/PRISM');
+            if (!await launchUrl(url)) debugPrint('Could not launch $url');
           },
           icon: const Icon(Icons.code, size: 18),
           label: const Text('View Source'),
@@ -131,11 +130,9 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
         OutlinedButton.icon(
-          onPressed: () {
-            Process.run('open', ['https://drive.google.com/file/d/1totQOAYRTH-1-jOY72Ybk-mRpKMAkrGz/view?usp=sharing']).catchError((e) {
-              debugPrint('Could not launch PDF: \$e');
-              return ProcessResult(0, 1, '', '');
-            });
+          onPressed: () async {
+            final Uri url = Uri.parse('https://drive.google.com/file/d/1totQOAYRTH-1-jOY72Ybk-mRpKMAkrGz/view?usp=sharing');
+            if (!await launchUrl(url)) debugPrint('Could not launch $url');
           },
           icon: const Icon(Icons.picture_as_pdf, size: 18),
           label: const Text('Read Paper'),
