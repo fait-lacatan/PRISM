@@ -271,7 +271,7 @@ class DashboardScreen extends ConsumerWidget {
           label: s.label, value: s.value, ci: s.ci,
           subtext: s.subtext, sentiment: s.sentiment,
           style: s.style,
-          onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_21', 'chap_26'])),
+          onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_16', 'chap_18', 'chap_23'])),
         )));
         children.add(SizedBox(height: gap));
       }
@@ -285,14 +285,14 @@ class DashboardScreen extends ConsumerWidget {
               label: _heroStats[0].label, value: _heroStats[0].value,
               ci: _heroStats[0].ci, subtext: _heroStats[0].subtext,
               sentiment: _heroStats[0].sentiment, style: _heroStats[0].style,
-              onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_21', 'chap_26'])),
+              onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_16', 'chap_18', 'chap_23'])),
             )),
             SizedBox(width: gap),
             Expanded(child: _HeroStatCard(
               label: _heroStats[1].label, value: _heroStats[1].value,
               ci: _heroStats[1].ci, subtext: _heroStats[1].subtext,
               sentiment: _heroStats[1].sentiment, style: _heroStats[1].style,
-              onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_21', 'chap_26'])),
+              onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_16', 'chap_18', 'chap_23'])),
             )),
           ],
         ),
@@ -302,7 +302,7 @@ class DashboardScreen extends ConsumerWidget {
         label: _heroStats[2].label, value: _heroStats[2].value,
         ci: _heroStats[2].ci, subtext: _heroStats[2].subtext,
         sentiment: _heroStats[2].sentiment, style: _heroStats[2].style,
-        onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_21', 'chap_26'])),
+        onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_16', 'chap_18', 'chap_23'])),
       )));
       children.add(SizedBox(height: gap));
     } else {
@@ -317,7 +317,7 @@ class DashboardScreen extends ConsumerWidget {
                 label: _heroStats[i].label, value: _heroStats[i].value,
                 ci: _heroStats[i].ci, subtext: _heroStats[i].subtext,
                 sentiment: _heroStats[i].sentiment, style: _heroStats[i].style,
-                onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_21', 'chap_26'])),
+                onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_16', 'chap_18', 'chap_23'])),
               )),
             ],
           ],
@@ -469,7 +469,7 @@ class _FactorialHeroCard extends StatelessWidget {
     return _CardShell(
       accentColor: _kViolet,
       style: _CardStyle.white,
-      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_25', 'chap_30'])),
+      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_22', 'chap_27'])),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -827,7 +827,7 @@ class _BiometricsSummaryCard extends StatelessWidget {
     return _CardShell(
       accentColor: _kViolet,
       style: _CardStyle.white,
-      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_21', 'chap_26'])),
+      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_18', 'chap_23'])),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -897,7 +897,7 @@ class _SecuritySummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return _CardShell(
       accentColor: _kGreen,
-      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_23', 'chap_28'])),
+      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_20', 'chap_25'])),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -959,7 +959,7 @@ class _BlockchainSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return _CardShell(
       accentColor: const Color(0xFF3B82F6),
-      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_22', 'chap_27'])),
+      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_19', 'chap_24'])),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1051,7 +1051,7 @@ class _LatencySummaryCard extends StatelessWidget {
     return _CardShell(
       accentColor: _kAmber,
       style: _CardStyle.white,
-      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_24', 'chap_29'])),
+      onTap: () => context.goNamed('narrative', extra: const NarrativeFlowParams(chapterIds: ['chap_21', 'chap_26'])),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

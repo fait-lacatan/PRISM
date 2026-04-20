@@ -55,6 +55,7 @@ class _PrototypeExplorerTemplateState extends State<PrototypeExplorerTemplate> {
 
         // Pre-cache
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
           for (int r = 0; r < _rows!; r++) {
             for (int c = 0; c < _cols!; c++) {
               precacheImage(AssetImage(_getFramePath(r, c)), context);
