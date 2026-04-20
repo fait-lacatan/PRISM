@@ -24,7 +24,7 @@ jobs:
       run: flutter build windows --release
 
     - name: Compile Inno Setup Script
-      uses: robmikh/innosetup-action@v1
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
         path: windows/prism_installer.iss
 
