@@ -11,7 +11,7 @@ class PrismMuseumApp extends ConsumerWidget {
     final goRouter = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'PRISM Museum',
+      title: 'Discover PRISM',
       theme: AppTheme.dark,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.dark,
