@@ -1,0 +1,162 @@
+{
+  "id": "hypothesis_framework",
+  "title": "Hypothesis Framework",
+  "subtitle": "Null vs alternative",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "hypothesis_framework",
+      "data": {
+        "title": "Hypothesis Framework",
+        "tabs": [
+          "Architecture flow",
+          "Hypothesis",
+          "Factorial design"
+        ],
+        "architecture": {
+          "title": "How revocation stages work differently",
+          "subtitle": "Switch credential state to see how each architecture responds",
+          "traditional": {
+            "label": "Traditional",
+            "steps": [
+              "1. Biometric Capture",
+              "2. Biometric Verify",
+              "3. DID Check",
+              "4. Credential Check"
+            ],
+            "active_outcome": "✓ Attendance recorded",
+            "revoked_outcome": "⚠ TX succeeded",
+            "revoked_fail_at": 3
+          },
+          "prism": {
+            "label": "PRISM",
+            "steps": [
+              "1. DID Check",
+              "2. Credential Check",
+              "3. Biometric Capture",
+              "4. Biometric Verify"
+            ],
+            "active_outcome": "✓ Attendance recorded",
+            "revoked_outcome": "✗ TX reverted",
+            "revoked_fail_at": 1
+          },
+          "differences": [
+            {
+              "color": "orange",
+              "text": "Traditional: biometrics are processed first; credential is checked last. A revoked user still triggers the full biometric pipeline."
+            },
+            {
+              "color": "blue",
+              "text": "PRISM: the blockchain gate fires first. If the DID is revoked, the smart contract reverts the transaction. Since PRISM uses 1:1 matching, the profile to match can never be found and the biometric gate never initializes."
+            }
+          ]
+        },
+        "hypothesis": {
+          "title": "Hypothesis framework",
+          "subtitle": "The test measures how much acceptance drops when a credential is revoked",
+          "null": {
+            "label": "H₀ — Null",
+            "text": "There is no significant difference between the proposed hierarchical biometric–blockchain architecture and the parallel fusion architecture in the degree to which credential revocation reduces the probability of attendance verification for enrolled users."
+          },
+          "alternative": {
+            "label": "H₁ — Alternative",
+            "text": "There is a significant difference between the proposed hierarchical biometric–blockchain architecture and the parallel fusion architecture in the degree to which credential revocation reduces the probability of attendance verification for enrolled users (p < 0.05)."
+          },
+          "measurements": [
+            {
+              "color": "green",
+              "text": "How much the acceptance rate drops when a credential is revoked"
+            },
+            {
+              "color": "green",
+              "text": "Bigger drop → stronger revocation enforcement → better security"
+            },
+            {
+              "color": "red",
+              "text": "No drop → revocation has no effect → security failure"
+            }
+          ],
+          "why_prism": "Because PRISM checks the DID on-chain before biometrics run, a revoked credential causes a transaction revert at step 2. Hence, the acceptance probability collapses to P(verify | revoked) = 0. The parallel baseline has no such pre-gate, so revoked users can still pass biometric matching."
+        },
+        "factorial": {
+          "title": "2×2 factorial design",
+          "subtitle": "Architecture × Credential State",
+          "columns": [
+            "Credential Active",
+            "Credential Revoked"
+          ],
+          "rows": [
+            {
+              "label": "Parallel (baseline)",
+              "cells": [
+                {
+                  "value": "n₁₁ / N",
+                  "style": "reference",
+                  "note": "reference group"
+                },
+                {
+                  "value": "n₁₂ / N",
+                  "style": "key",
+                  "note": ""
+                }
+              ]
+            },
+            {
+              "label": "PRISM",
+              "cells": [
+                {
+                  "value": "n₂₁ / N",
+                  "style": "normal",
+                  "note": ""
+                },
+                {
+                  "value": "n₂₂ / N",
+                  "style": "critical",
+                  "note": "expected ≈ 0"
+                }
+              ]
+            }
+          ],
+          "reference_note": "Reference group: Parallel architecture in the active state (n₁₁). All comparisons are made relative to this cell.",
+          "stat_method": "Firth's Penalized Logistic Regression",
+          "stat_reason": "Used because PRISM + Revoked (n₂₂) is expected to produce complete separation, as in zero verifications. Standard logistic regression fails here; Firth's penalty stabilizes the estimate.",
+          "stat_cards": [
+            {
+              "symbol": "β",
+              "name": "Beta coefficient",
+              "rows": [
+                "β < 0 → verification less likely",
+                "β > 0 → verification more likely",
+                "β = 0 → no effect"
+              ]
+            },
+            {
+              "symbol": "OR",
+              "name": "Odds ratio",
+              "rows": [
+                "OR = 1.0 → neutral (no change)",
+                "OR < 1.0 → odds shrink (less access)",
+                "OR > 1.0 → odds grow (more access)"
+              ]
+            },
+            {
+              "symbol": "SE",
+              "name": "Standard error",
+              "rows": [
+                "Margin of uncertainty around β",
+                "Large SE → less confident estimate",
+                "Firth's penalty shrinks SE at boundaries"
+              ]
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    }
+  ]
+}

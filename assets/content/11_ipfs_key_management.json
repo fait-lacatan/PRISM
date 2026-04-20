@@ -1,0 +1,90 @@
+{
+  "id": "design_stage",
+  "title": "IPFS Key Management",
+  "subtitle": "Data isolation & swarm architecture",
+  "accentColor": "#A78BFA",
+  "sections": [
+    {
+      "template": "key_hierarchy",
+      "data": {
+        "title": "Cryptographic Key Hierarchy",
+        "description": "PRISM enforces robust isolation using HMAC-based Extract-and-Expand Key Derivation (HKDF). A single TPM-bound device root key deterministically expands into distinct functional domains.",
+        "root": {
+          "label": "DEVICE_ROOT_KEY",
+          "context": "TPM-bound in production",
+          "children": [
+            {
+              "label": "wallet_seed",
+              "action": "HKDF(root, 'PRISM:wallet', salt=node_ip)",
+              "desc": "Per-node TX signing"
+            },
+            {
+              "label": "master_seed",
+              "action": "HKDF(root, 'PRISM:master_seed')",
+              "desc": "User key derivation (Kiosk only)",
+              "children": [
+                {
+                  "label": "user_key",
+                  "action": "HKDF(master_seed, user_did)",
+                  "desc": "Per-user encryption"
+                }
+              ]
+            },
+            {
+              "label": "swarm_key",
+              "action": "HKDF(root, 'PRISM:swarm')",
+              "desc": "IPFS network access"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "template": "device_binding",
+      "data": {
+        "title": "Encryption & Data Isolation",
+        "description": "Each user's biometric vault CID is AES-encrypted. Decentralized access control is inherently mathematical rather than programmatic.",
+        "kiosk": {
+          "capabilities": [
+            "Holds master_seed",
+            "Can derive any user_key dynamically",
+            "Universal decryption within session"
+          ],
+          "color": "#38BDF8"
+        },
+        "personal_device": {
+          "capabilities": [
+            "Receives pre-computed owner_key only",
+            "Mathematically restricted to owner data",
+            "Cross-user derivation impossible"
+          ],
+          "color": "#22C55E"
+        }
+      }
+    },
+    {
+      "template": "zero_knowledge_storage",
+      "data": {
+        "title": "Distributed Storage Logic",
+        "description": "The system's reliance on IPFS for decentralized storage necessitates a strict zero-knowledge model to prevent unauthorized indexing or retrieval.",
+        "phases": [
+          {
+            "id": "isolation",
+            "title": "Private Swarm Isolation",
+            "desc": "Nodes lacking the cryptographic swarm_key are rejected at the transport layer before participating in the distributed hash table. External nodes cannot index or retrieve vault objects."
+          },
+          {
+            "id": "zero_data",
+            "title": "Zero-Data Paradigm",
+            "desc": "Only the CID is stored on-chain. Decryption capabilities remain mathematically bound to live biometric reconstruction. Opacity is preserved."
+          },
+          {
+            "id": "anchoring",
+            "title": "Data Anchoring Integrity",
+            "desc": "Transactions broadcast only after successful pin confirmation across the swarm. Content-addressed storage makes any payload tampering inherently visible by altering the CID."
+          }
+        ]
+      }
+    }
+  ]
+}

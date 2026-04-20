@@ -1,0 +1,92 @@
+{
+  "id": "design_stage",
+  "title": "Hardware Infrastructure",
+  "subtitle": "Edge nodes & sensors",
+  "accentColor": "#38BDF8",
+  "sections": [
+    {
+      "template": "prototype_explorer",
+      "data": {
+        "title": "Kiosk Prototype",
+        "subtitle": "Interactive View",
+        "description": "The biometric kiosk acts as a zero-trust oracle. By processing raw sensors into irreversible cryptographic embeddings locally, no sensitive biometric data ever leaves the device.",
+        "placeholder_image": "assets/images/hardware/kiosk_placeholder.png"
+      }
+    },
+    {
+      "template": "hardware_components",
+      "data": {
+        "title": "Sensor, Camera, and Display",
+        "subtitle": "Off-the-shelf peripherals operating in a strictly controlled environment",
+        "components": [
+          {
+            "id": "camera",
+            "name": "Logitech C922 Pro\n1080p Web-Camera",
+            "role": "Dual-role optical sensor. Feeds raw frames first to the PAD liveness gate, and upon clearance, routes crops to the EfficientNet + STL facial embedding extractor.",
+            "image": "assets/images/hardware/webcam.png"
+          },
+          {
+            "id": "scanner",
+            "name": "ADHTech Fingerprint Scanner GT-521F52",
+            "role": "Optical sensor configured for raw mode. Internal matching algorithms are bypassed entirely to generate DeepPrint texture vectors for the fuzzy extractor.",
+            "image": "assets/images/hardware/fingerprint_scanner.png"
+          },
+          {
+            "id": "display",
+            "name": "Waveshare 7-inch capacitive LCD",
+            "role": "Capacitive multi-touch terminal providing interactive feedback, consent controls, and real-time transaction lifecycle visibility.",
+            "image": "assets/images/hardware/lcd_display.png"
+          }
+        ]
+      }
+    },
+    {
+      "template": "network_topology",
+      "data": {
+        "title": "Physical Network Topology",
+        "subtitle": "Gigabit Ethernet Star Configuration",
+        "description": "The edge nodes communicate via a dedicated Layer-2 switch forming a strict physical Star Topology. This isolates consensus traffic and the IPFS DLT pinning tasks from external networks.",
+        "nodes": 4,
+        "center_label": "Switch"
+      }
+    },
+    {
+      "template": "resource_allocation",
+      "data": {
+        "title": "Edge Node Cluster Allocation",
+        "subtitle": "HP ProDesk 600 G2 Mini Desktop",
+        "specs": [
+          {
+            "label": "Processor",
+            "value": "Intel Core i5 7th-generation"
+          },
+          {
+            "label": "Memory",
+            "value": "16 GB dual-channel RAM"
+          },
+          {
+            "label": "Storage",
+            "value": "256 GB SSD"
+          }
+        ],
+        "cores": [
+          {
+            "count": 2,
+            "label": "Biometrics and\nnetworking",
+            "color": "#38BDF8"
+          },
+          {
+            "count": 1,
+            "label": "Validator\nnode",
+            "color": "#818CF8"
+          },
+          {
+            "count": 1,
+            "label": "IPFS\nnode",
+            "color": "#A78BFA"
+          }
+        ]
+      }
+    }
+  ]
+}

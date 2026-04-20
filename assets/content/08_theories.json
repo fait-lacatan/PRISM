@@ -1,0 +1,601 @@
+{
+  "id": "theoretical_framework",
+  "title": "Foundational Theories",
+  "subtitle": "Biometrics, blockchain, SSI",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "foundational_theories",
+      "data": {
+        "theories": [
+          {
+            "id": "pad",
+            "number": 1,
+            "tag_color": "blue",
+            "name": "Presentation Attack Detection (PAD)",
+            "subtitle": "A biometric system must distinguish a live user from a spoofed presentation. PAD is the foundational gate that ensures only genuine biometric samples enter the pipeline.",
+            "modes": [
+              {
+                "label": "What is PAD?",
+                "key": "what",
+                "color": "blue"
+              },
+              {
+                "label": "Attack types",
+                "key": "attacks",
+                "color": "blue"
+              },
+              {
+                "label": "How PRISM uses PAD",
+                "key": "prism",
+                "color": "blue"
+              }
+            ],
+            "explanations": {
+              "what": {
+                "title": "What is PAD?",
+                "body": "Presentation Attack Detection determines whether a biometric sample originates from a live person or from an artifact (photo, mask, replay video, or synthetic injection).\n\nISO 30107 defines the standard: a Presentation Attack Instrument (PAI) is the spoofing medium; the PAD subsystem is the detection mechanism that gates the pipeline.\n\nWithout PAD, even a perfect biometric matcher can be trivially bypassed by presenting a high-quality photo or video of the genuine user.",
+                "highlights": [
+                  {
+                    "label": "ISO 30107",
+                    "text": "International standard for PAD evaluation and reporting"
+                  },
+                  {
+                    "label": "APCER",
+                    "text": "Attack Presentation Classification Error Rate — how often attacks slip through"
+                  },
+                  {
+                    "label": "BPCER",
+                    "text": "Bonafide Presentation Classification Error Rate — how often real users are rejected"
+                  }
+                ]
+              },
+              "attacks": {
+                "title": "Common attack vectors",
+                "body": "Each attack type exploits a different weakness in the biometric capture pipeline:",
+                "attack_list": [
+                  {
+                    "icon": "photo",
+                    "name": "Print attack",
+                    "severity": "low"
+                  },
+                  {
+                    "icon": "videocam",
+                    "name": "Replay attack",
+                    "severity": "medium"
+                  },
+                  {
+                    "icon": "face_retouching_natural",
+                    "name": "3D mask attack",
+                    "severity": "high"
+                  },
+                  {
+                    "icon": "memory",
+                    "name": "Deepfake injection",
+                    "severity": "critical"
+                  }
+                ]
+              },
+              "prism": {
+                "title": "PAD in PRISM",
+                "body": "PRISM integrates PAD as the first gate in the biometric pipeline. The liveness check runs before any feature extraction or matching occurs.\n\nIf PAD rejects the sample, the entire downstream pipeline is never invoked. No template is generated, no vault key is derived, and no blockchain transaction is initiated.",
+                "pipeline_position": [
+                  "PAD Gate",
+                  "Feature Extraction",
+                  "Template Generation",
+                  "Blockchain Anchor"
+                ],
+                "gate_note": "PAD is the binary gate: live or not live. Without this gate, every subsequent security layer is meaningless."
+              }
+            }
+          },
+          {
+            "id": "triplet_loss",
+            "number": 2,
+            "tag_color": "violet",
+            "name": "Deep Learning & Secure Triplet Loss",
+            "subtitle": "Standard Triplet Loss maps faces into a Euclidean space. STL adds a cryptographic key that parameterizes the entire embedding, making templates cancelable and unlinkable.",
+            "modes": [
+              {
+                "label": "Standard triplet loss",
+                "key": "standard",
+                "color": "violet"
+              },
+              {
+                "label": "Secure triplet loss",
+                "key": "stl",
+                "color": "violet"
+              },
+              {
+                "label": "Simulate reissuance",
+                "key": "reissue",
+                "color": "violet"
+              }
+            ],
+            "explanations": {
+              "standard": "Standard Triplet Loss trains a neural network to map faces into an embedding space where the Anchor (A) and Positive (P), both belonging to the same identity, are pulled close together and the Anchor (A) and Negative (N), an impostor pair, are pushed far apart. The loss function enforces a margin: d(A,P) + margin < d(A,N).",
+              "stl": "Secure Triplet Loss adds a secret key kS that parameterizes the entire embedding function. The embedding E(x, kS) produces a completely different distribution for each key.\n\nWithout kS, the raw biometric cannot be matched; the template is meaningless without the key. This achieves cancelability while preserving discriminability.\n\nDiscriminability refers to the property of the model that ensures different identities remain separable in embedding space. Meanwhile, cancelability ensures that changing kS produces a completely different embedding distribution. Revoke key → reissue a new one → old templates become useless.",
+              "reissue": "When a template is compromised, the institution reissues a new key kS'. The new embedding E(x, kS') is orthogonal to the old one, where they share zero correlation.\n\nAn attacker holding the old template gains no advantage: the new template lives in a completely different region of the embedding space.This refers to the unlinkability property of the model."
+            }
+          },
+          {
+            "id": "fuzzy_extractor",
+            "number": 3,
+            "tag_color": "orange",
+            "name": "Biometric Cryptosystems & Fuzzy Extractor",
+            "subtitle": "A fuzzy extractor derives a stable cryptographic key from inherently noisy fingerprint scans without ever storing the raw fingerprint or the key itself.",
+            "modes": [
+              {
+                "label": "Enrollment",
+                "key": "enroll",
+                "color": "orange"
+              },
+              {
+                "label": "Close match ✓",
+                "key": "verify-pass",
+                "color": "orange"
+              },
+              {
+                "label": "Too different ✗",
+                "key": "verify-fail",
+                "color": "orange"
+              }
+            ],
+            "pipeline_nodes": [
+              {
+                "label": "Fingerprint scan",
+                "type": "input"
+              },
+              {
+                "label": "DeepPrint features",
+                "type": "process"
+              },
+              {
+                "label": "Fuzzy Extractor",
+                "type": "core"
+              },
+              {
+                "label": "kV generated",
+                "type": "key"
+              },
+              {
+                "label": "Helper data H",
+                "type": "output"
+              }
+            ],
+            "explanations": {
+              "enroll": "During enrollment, DeepPrint extracts a fixed-length feature vector from the fingerprint scan. The fuzzy extractor uses it to generate a random vault key kV and outputs only public helper data H. Neither the fingerprint nor kV is stored.",
+              "verify-pass": "Fresh scan differs slightly (pressure, rotation) but stays within the error-correction capacity of Reed-Solomon codes. ECC compensates the noise → same codeword → same kV reconstructed → vault unlocked.",
+              "verify-fail": "Scan variance exceeds the ECC tolerance. The noise cannot be corrected. Different codeword is recovered → different (wrong) kV → vault stays locked → kS never released → face gate inert."
+            },
+            "noise_levels": {
+              "enroll": {
+                "value": 0.30,
+                "label": "Baseline",
+                "color": "green"
+              },
+              "verify-pass": {
+                "value": 0.65,
+                "label": "Within ECC ✓",
+                "color": "green"
+              },
+              "verify-fail": {
+                "value": 0.92,
+                "label": "Beyond ECC ✗",
+                "color": "red"
+              }
+            }
+          },
+          {
+            "id": "blockchain_qbft",
+            "number": 4,
+            "tag_color": "yellow",
+            "name": "Blockchain, Private Networks & QBFT Consensus",
+            "subtitle": "Quorum's QBFT provides deterministic finality tolerating up to ⅓ faulty validators. Zero-data principle: only IPFS CIDs go on-chain, no biometric data ever.",
+            "modes": [
+              {
+                "label": "Block chain",
+                "key": "chain",
+                "color": "yellow"
+              },
+              {
+                "label": "QBFT consensus",
+                "key": "qbft",
+                "color": "yellow"
+              }
+            ],
+            "chain_blocks": [
+              {
+                "num": "GENESIS",
+                "hash": "0x0000…0000",
+                "data": "—"
+              },
+              {
+                "num": "BLOCK 1",
+                "hash": "0xa3f2…c91b",
+                "data": "CID:Qm4x…"
+              },
+              {
+                "num": "BLOCK 2",
+                "hash": "0x7d1e…f83a",
+                "data": "CID:Qm9y…"
+              },
+              {
+                "num": "BLOCK 3",
+                "hash": "0x2c8a…d04f",
+                "data": "CID:Qm2z…",
+                "is_new": true
+              }
+            ],
+            "chain_description": "Each block's prev_hash points to the hash of the block before it. Altering any historical record changes its hash, invalidating all subsequent blocks instantly. This is the tamper-evidence guarantee.",
+            "zero_data_note": "Zero-data principle: only IPFS CIDs are stored on-chain. The actual biometric template lives off-chain in IPFS, and the blockchain stores only a pointer and hash proof.",
+            "validators": [
+              "Validator 1",
+              "Validator 2",
+              "Validator 3",
+              "Validator 4"
+            ],
+            "qbft_healthy_rounds": [
+              {
+                "round": "Round 1 — Proposal",
+                "states": [
+                  "proposer",
+                  "idle",
+                  "idle",
+                  "idle"
+                ],
+                "votes": [
+                  "PROPOSE",
+                  "—",
+                  "—",
+                  "—"
+                ],
+                "desc": "Validator 1 is selected as proposer and broadcasts a block proposal to all other validators. All 4 nodes are healthy."
+              },
+              {
+                "round": "Round 2 — Prepare",
+                "states": [
+                  "proposer",
+                  "voter",
+                  "voter",
+                  "voter"
+                ],
+                "votes": [
+                  "PROPOSE",
+                  "PREPARE",
+                  "PREPARE",
+                  "PREPARE"
+                ],
+                "desc": "All validators receive the proposal, validate it, and broadcast PREPARE votes. The network requires 2f+1 = 3 PREPARE votes to proceed."
+              },
+              {
+                "round": "Round 3 — Commit",
+                "states": [
+                  "voter",
+                  "voter",
+                  "voter",
+                  "voter"
+                ],
+                "votes": [
+                  "COMMIT",
+                  "COMMIT",
+                  "COMMIT",
+                  "COMMIT"
+                ],
+                "desc": "All 4 validators commit. With 4 ≥ 2f+1, the block achieves deterministic finality, and no forks are possible."
+              },
+              {
+                "round": "Block Finalized ✓",
+                "states": [
+                  "finalized",
+                  "finalized",
+                  "finalized",
+                  "finalized"
+                ],
+                "votes": [
+                  "FINAL",
+                  "FINAL",
+                  "FINAL",
+                  "FINAL"
+                ],
+                "desc": "Block appended with deterministic finality. The attendance CID is now immutably anchored. All validators agree."
+              }
+            ],
+            "fault_scenarios": {
+              "malicious": {
+                "label": "Malicious node",
+                "icon": "warning",
+                "rounds": [
+                  {
+                    "round": "Malicious — Proposal",
+                    "states": [
+                      "proposer",
+                      "idle",
+                      "idle",
+                      "malicious"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "—",
+                      "—",
+                      "CHEAT"
+                    ],
+                    "desc": "Validator 4 is Byzantine; it broadcasts conflicting messages (equivocation). The honest validators detect the inconsistency."
+                  },
+                  {
+                    "round": "Malicious — Prepare",
+                    "states": [
+                      "proposer",
+                      "voter",
+                      "voter",
+                      "malicious"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "PREPARE",
+                      "PREPARE",
+                      "CONFLICT"
+                    ],
+                    "desc": "Validator 4 sends conflicting PREPARE votes to different validators. QBFT's protocol detects this: the two honest PREPAREs + proposer's own = 3 ≥ 2f+1. Consensus proceeds."
+                  },
+                  {
+                    "round": "Malicious — Commit",
+                    "states": [
+                      "voter",
+                      "voter",
+                      "voter",
+                      "malicious"
+                    ],
+                    "votes": [
+                      "COMMIT",
+                      "COMMIT",
+                      "COMMIT",
+                      "REJECTED"
+                    ],
+                    "desc": "3 honest validators commit. Validator 4's equivocation is recorded and it is excluded from this round. The block is finalized despite the Byzantine behavior."
+                  },
+                  {
+                    "round": "Block Finalized ✓",
+                    "states": [
+                      "finalized",
+                      "finalized",
+                      "finalized",
+                      "excluded"
+                    ],
+                    "votes": [
+                      "FINAL",
+                      "FINAL",
+                      "FINAL",
+                      "EXCLUDED"
+                    ],
+                    "desc": "Block finalized with deterministic finality. The malicious validator is excluded but cannot prevent or fork the chain. BFT guarantee: tolerates ⌊(4-1)/3⌋ = 1 faulty node."
+                  }
+                ]
+              },
+              "crash": {
+                "label": "Node crash",
+                "icon": "power_off",
+                "rounds": [
+                  {
+                    "round": "Crash — Proposal",
+                    "states": [
+                      "proposer",
+                      "idle",
+                      "idle",
+                      "crashed"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "—",
+                      "—",
+                      "OFFLINE"
+                    ],
+                    "desc": "Validator 4 has crashed; it sends no messages at all. The remaining 3 validators don't receive any vote from it."
+                  },
+                  {
+                    "round": "Crash — Prepare",
+                    "states": [
+                      "proposer",
+                      "voter",
+                      "voter",
+                      "crashed"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "PREPARE",
+                      "PREPARE",
+                      "OFFLINE"
+                    ],
+                    "desc": "Only 3 validators participate. 3 PREPARE votes ≥ 2f+1 = 3, so the protocol proceeds normally despite the missing node."
+                  },
+                  {
+                    "round": "Crash — Commit",
+                    "states": [
+                      "voter",
+                      "voter",
+                      "voter",
+                      "crashed"
+                    ],
+                    "votes": [
+                      "COMMIT",
+                      "COMMIT",
+                      "COMMIT",
+                      "OFFLINE"
+                    ],
+                    "desc": "3 honest validators commit. The crashed node misses the round entirely but the network maintains liveness and safety."
+                  },
+                  {
+                    "round": "Block Finalized ✓",
+                    "states": [
+                      "finalized",
+                      "finalized",
+                      "finalized",
+                      "crashed"
+                    ],
+                    "votes": [
+                      "FINAL",
+                      "FINAL",
+                      "FINAL",
+                      "OFFLINE"
+                    ],
+                    "desc": "Block finalized. Crashed validator can rejoin later and sync the missed blocks. The network continues without interruption."
+                  }
+                ]
+              },
+              "partition": {
+                "label": "Network partition",
+                "icon": "wifi_off",
+                "rounds": [
+                  {
+                    "round": "Partition — Network splits",
+                    "states": [
+                      "partitioned_a",
+                      "partitioned_a",
+                      "partitioned_b",
+                      "partitioned_b"
+                    ],
+                    "votes": [
+                      "GROUP A",
+                      "GROUP A",
+                      "GROUP B",
+                      "GROUP B"
+                    ],
+                    "desc": "The network splits into two partitions: V1 + V2 (Group A) and V3 + V4 (Group B). Neither group can see the other's messages."
+                  },
+                  {
+                    "round": "Partition — Proposal attempt",
+                    "states": [
+                      "partitioned_a",
+                      "partitioned_a",
+                      "partitioned_b",
+                      "partitioned_b"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "—",
+                      "PROPOSE",
+                      "—"
+                    ],
+                    "desc": "Both V1 (Group A) and V3 (Group B) attempt to propose a block. Each proposal only reaches their own partition, only 1 other validator."
+                  },
+                  {
+                    "round": "Partition — Prepare stalls",
+                    "states": [
+                      "partitioned_a",
+                      "partitioned_a",
+                      "partitioned_b",
+                      "partitioned_b"
+                    ],
+                    "votes": [
+                      "PROPOSE",
+                      "PREPARE",
+                      "PROPOSE",
+                      "PREPARE"
+                    ],
+                    "desc": "Each partition has only 2 validators. 2 < 2f+1 = 3 required PREPAREs. Neither partition can reach quorum. Consensus stalls, where safety is preserved but liveness is lost."
+                  },
+                  {
+                    "round": "No finalization ✗",
+                    "states": [
+                      "partitioned_a",
+                      "partitioned_a",
+                      "partitioned_b",
+                      "partitioned_b"
+                    ],
+                    "votes": [
+                      "STALLED",
+                      "STALLED",
+                      "STALLED",
+                      "STALLED"
+                    ],
+                    "desc": "Neither partition can finalize a block. This is the correct BFT behavior: QBFT sacrifices liveness to guarantee safety, and no conflicting blocks can ever be committed. When the partition heals, consensus resumes normally."
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "ssi_did",
+            "number": 5,
+            "tag_color": "green",
+            "name": "Self-Sovereign Identity & Cryptographic Access Control",
+            "subtitle": "Identity is not an administrative entry. It is a mathematical derivation from a cryptographic key generated locally on the user's device.",
+            "modes": [
+              {
+                "label": "Enrollment",
+                "key": "enroll",
+                "color": "green"
+              },
+              {
+                "label": "Verification",
+                "key": "present",
+                "color": "green"
+              },
+              {
+                "label": "Revocation",
+                "key": "revoke",
+                "color": "green"
+              },
+              {
+                "label": "Reissuance",
+                "key": "reissue",
+                "color": "green"
+              }
+            ],
+            "entities": [
+              {
+                "id": "holder",
+                "icon": "person",
+                "label": "Holder",
+                "sub": "User device that generates and stores DID keypair locally",
+                "active_in": [
+                  "enroll",
+                  "present",
+                  "reissue"
+                ]
+              },
+              {
+                "id": "issuer",
+                "icon": "account_balance",
+                "label": "Issuer",
+                "sub": "Institution that signs and issues VCs",
+                "active_in": [
+                  "enroll",
+                  "revoke",
+                  "reissue"
+                ]
+              },
+              {
+                "id": "verifier",
+                "icon": "verified_user",
+                "label": "Verifier",
+                "sub": "Checks VC signature against DID registered on blockchain",
+                "active_in": [
+                  "present"
+                ]
+              },
+              {
+                "id": "blockchain",
+                "icon": "link",
+                "label": "Blockchain",
+                "sub": "Anchors DID documents and stores revocation registry",
+                "active_in": [
+                  "enroll",
+                  "present",
+                  "revoke",
+                  "reissue"
+                ]
+              }
+            ],
+            "explanations": {
+              "enroll": "The user's device generates an asymmetric keypair locally. The DID is derived from the public key and never assigned by a server. The DID document is anchored to the blockchain. The issuer then signs a VC binding the DID to the user's enrollment record.",
+              "present": "The holder presents the VC to the verifier. The verifier resolves the DID on-chain, verifies the issuer's signature, and checks the revocation registry. No raw biometric data crosses the wire, only the cryptographic proof.",
+              "revoke": "The issuer (or smart contract) marks the VC as revoked on the blockchain's revocation registry. The next verification attempt discovers the revoked status and rejects the credential. PRISM's DID-first lookup means this fires before any biometric attempt.",
+              "reissue": "After revocation, the issuer generates a new VC bound to the same DID (or a new DID if the keypair is compromised). The new credential is anchored on-chain. The old revoked VC remains invalid, and the holder now presents only the new credential."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

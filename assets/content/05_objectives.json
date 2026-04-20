@@ -1,0 +1,87 @@
+{
+  "id": "objectives",
+  "title": "Research Objectives",
+  "subtitle": "General & specific objectives",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "objectives",
+      "data": {
+        "title": "General & Specific Objectives",
+        "general": {
+          "text": "To design, implement, and evaluate an integrated, privacy-preserving, blockchain-based attendance verification system that (a) utilizes {cmhb|cancelable multimodal-hierarchical biometrics} and a {didvc|user-centric DID/VC framework} to enforce secure {sync|credential lifecycle synchronization}, and (b) maintains auditable and verifiable attendance records across a distributed network of {edge|physically accessible edge validators}."
+        },
+        "keywords": [
+          {
+            "key": "cmhb",
+            "label": "Cancelable multimodal-hierarchical biometrics",
+            "definition": "Uses multiple biometric traits (e.g. face + fingerprint) processed through irreversible transforms so they can be revoked without exposing raw data."
+          },
+          {
+            "key": "didvc",
+            "label": "DID/VC framework",
+            "definition": "Decentralized Identifiers and Verifiable Credentials; a W3C standard enabling users to hold and present identity proofs without a central authority."
+          },
+          {
+            "key": "sync",
+            "label": "Credential lifecycle synchronization",
+            "definition": "Keeping enrollment, verification, re-issuance, and revocation states consistent across all nodes in real time."
+          },
+          {
+            "key": "edge",
+            "label": "Edge validators",
+            "definition": "Blockchain nodes co-located with biometric capture devices (e.g. school gate kiosks) that validate transactions locally."
+          }
+        ],
+        "specific": [
+          {
+            "icon": "fingerprint",
+            "short": "Build & evaluate multimodal biometric accuracy using cancelable templates",
+            "detail": "Develop a multimodal-hierarchical biometrics-based attendance system that employs cancelable transformation techniques and evaluate its recognition accuracy using solely the transformed templates, never exposing raw biometric data.",
+            "tags": [
+              "Cancelable biometrics",
+              "Recognition accuracy",
+              "Template security"
+            ]
+          },
+          {
+            "icon": "lock_outline",
+            "short": "Integrate biometric layer with blockchain for immutable, auditable records",
+            "detail": "Integrate the biometric layer with a blockchain network for anchoring transformed templates, and evaluate the immutability, auditability, and consistency of records anchored by physically accessible edge nodes.",
+            "tags": [
+              "Blockchain anchoring",
+              "Immutability",
+              "Edge nodes"
+            ]
+          },
+          {
+            "icon": "schedule",
+            "short": "Implement DID/VC framework for full credential lifecycle management",
+            "detail": "Implement a user-centric DID/VC framework enforcing secure lifecycle synchronization, including enrollment, verification, re-issuance, and revocation, and test its effectiveness in mitigating biometric leakage while ensuring authorized access.",
+            "tags": [
+              "DID / VC",
+              "Revocation",
+              "Leakage prevention"
+            ]
+          },
+          {
+            "icon": "monitor_heart",
+            "short": "Evaluate overall system performance, resilience & consensus integrity",
+            "detail": "Evaluate the system's consensus integrity and operational resilience across distributed edge validators, assessing the combined effectiveness of cancelable techniques, blockchain integration, and user-centric identity management.",
+            "tags": [
+              "Consensus integrity",
+              "Resilience",
+              "System evaluation"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    }
+  ]
+}

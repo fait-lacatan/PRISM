@@ -1,0 +1,672 @@
+{
+  "id": "design_stage",
+  "title": "Threat Model",
+  "subtitle": "Systematic vulnerability analysis",
+  "accentColor": "#EF4444",
+  "sections": [
+    {
+      "template": "threat_landscape",
+      "data": {
+        "title": "Threat Canvas",
+        "description": "Click any threat actor to focus their attack vectors on the asset ring.",
+        "assets": [
+          {
+            "name": "Root Key",
+            "short": "Root\nKey",
+            "confidentiality": "critical"
+          },
+          {
+            "name": "Master Seed",
+            "short": "Seed",
+            "confidentiality": "critical"
+          },
+          {
+            "name": "Biometrics",
+            "short": "Bio",
+            "confidentiality": "critical"
+          },
+          {
+            "name": "Owner Key",
+            "short": "Owner\nKey",
+            "confidentiality": "high"
+          },
+          {
+            "name": "Swarm Key",
+            "short": "Swarm\nKey",
+            "confidentiality": "high"
+          },
+          {
+            "name": "Wallet Key",
+            "short": "Wallet",
+            "confidentiality": "medium"
+          },
+          {
+            "name": "User DIDs",
+            "short": "DIDs",
+            "confidentiality": "low"
+          },
+          {
+            "name": "Profile CIDs",
+            "short": "CIDs",
+            "confidentiality": "high"
+          },
+          {
+            "name": "Profile Data",
+            "short": "Data",
+            "confidentiality": "high"
+          },
+          {
+            "name": "Attend. VCs",
+            "short": "VCs",
+            "confidentiality": "medium"
+          }
+        ],
+        "actors": [
+          {
+            "name": "External\nAttacker",
+            "short": "EXT",
+            "targets": [
+              2,
+              7,
+              8,
+              5
+            ],
+            "color": "#C026D3",
+            "labelColor": "#E879F9",
+            "vectors": [
+              "K7: OS malware on kiosk",
+              "K8: IPFS data exfiltration",
+              "N1–N5: Network eavesdrop/MITM",
+              "B4: Smart contract exploit"
+            ]
+          },
+          {
+            "name": "Physical\nThief",
+            "short": "THF",
+            "targets": [
+              0,
+              1,
+              4
+            ],
+            "color": "#DC2626",
+            "labelColor": "#F87171",
+            "vectors": [
+              "K1: Disk theft (file-based keys)",
+              "K2: Disk theft (TPM bypass)",
+              "K3: RAM dump during derivation"
+            ]
+          },
+          {
+            "name": "Insider\nUser",
+            "short": "USR",
+            "targets": [
+              9,
+              6,
+              7
+            ],
+            "color": "#D97706",
+            "labelColor": "#FCD34D",
+            "vectors": [
+              "P3: Fake attendance TX",
+              "P4: Replay stale VC",
+              "P5: TX flooding / auto-suspend"
+            ]
+          },
+          {
+            "name": "Insider\nAdmin",
+            "short": "ADM",
+            "targets": [
+              0,
+              2,
+              8,
+              9,
+              7
+            ],
+            "color": "#7C3AED",
+            "labelColor": "#A78BFA",
+            "vectors": [
+              "K8: Mass IPFS exfiltration",
+              "B5: Permissioning desync abuse"
+            ]
+          },
+          {
+            "name": "Nation\nState",
+            "short": "NST",
+            "targets": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "color": "#0E7490",
+            "labelColor": "#22D3EE",
+            "vectors": [
+              "N2: Advanced persistent MITM",
+              "N4: Traffic analysis / correlation",
+              "K3: TEE-level RAM extraction"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template": "blockchain_guards",
+      "data": {
+        "title": "Guard Vectors",
+        "description": "Select a guard cell to visualize the attack vector and smart contract mitigation.",
+        "categories": {
+          "rbac": {
+            "color": "#38BDF8",
+            "label": "RBAC"
+          },
+          "lifecycle": {
+            "color": "#22C55E",
+            "label": "Lifecycle"
+          },
+          "sig": {
+            "color": "#F97316",
+            "label": "Signature"
+          },
+          "nonce": {
+            "color": "#A78BFA",
+            "label": "Nonce"
+          },
+          "storage": {
+            "color": "#FBBF24",
+            "label": "Storage"
+          }
+        },
+        "guards": [
+          {
+            "id": "G1",
+            "name": "Unauthorized enode registration",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "An unregistered device attempts to map itself to a consensus node without prior authorization.",
+            "guard": "Device-to-node mapping requires prior consensus-layer authorization; the registry rejects linkage without it."
+          },
+          {
+            "id": "G2",
+            "name": "Non-manager role impersonation",
+            "cat": "rbac",
+            "layer": "Consensus",
+            "attack": "A random account attempts to call a manager-restricted consensus function.",
+            "guard": "RBAC modifier checks the caller's manager flag on-chain and reverts if absent."
+          },
+          {
+            "id": "G3",
+            "name": "Manager delegation abuse",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "A manager attempts to appoint another manager, bypassing owner authority.",
+            "guard": "Manager appointment is restricted to the contract owner; only the owner can grant or revoke manager status."
+          },
+          {
+            "id": "G4",
+            "name": "Owner self-ban",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "An attacker with registry access tries to ban the contract owner address, locking the system.",
+            "guard": "Ban operation reverts when the target address is the contract owner."
+          },
+          {
+            "id": "G5",
+            "name": "Administrative zombie",
+            "cat": "rbac",
+            "layer": "Cross-contract",
+            "attack": "A banned manager's address persists in the consensus layer and executes operations.",
+            "guard": "Cross-contract isolation: consensus layer queries registry ban status before authorizing any operation."
+          },
+          {
+            "id": "G6",
+            "name": "Pending owner griefing",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "During a two-step ownership transfer, the current owner tries to ban the pending recipient.",
+            "guard": "Ban reverts when the target is a pending ownership transfer recipient."
+          },
+          {
+            "id": "G7",
+            "name": "Mapping overwrite (1:1 violation)",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "An attacker remaps Device A to a different node, or remaps two devices to the same node.",
+            "guard": "Bijective mapping enforced; each device maps to exactly one node and vice versa. Both remap attempts revert."
+          },
+          {
+            "id": "G8",
+            "name": "Unlinked device bypass",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "A device that is not yet linked to a node tries to receive enrollment or record capabilities.",
+            "guard": "Authority grants require prior device-to-node linkage. Unregistered devices cannot receive capability flags."
+          },
+          {
+            "id": "G9",
+            "name": "Unauthorized credential reissuance",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "A caller without canReissue flag submits a reissuance TX, even with a valid consent voucher.",
+            "guard": "Reissuance checks canReissue[C] first; unauthorized callers are rejected regardless of voucher validity."
+          },
+          {
+            "id": "G10",
+            "name": "Outbound dialing to banned node",
+            "cat": "rbac",
+            "layer": "Consensus",
+            "attack": "A compromised honest node tries to connect outbound to a banned validator, leaking gossip.",
+            "guard": "Connection authorization check rejects outbound connections to banned node hashes before any handshake."
+          },
+          {
+            "id": "G11",
+            "name": "Suspension bypass / duplicate",
+            "cat": "lifecycle",
+            "layer": "Registry",
+            "attack": "An attacker submits a duplicate suspension or attempts suspension on an already-suspended DID.",
+            "guard": "Suspension checks active enrollment status; duplicate suspension reverts. Reinstatement is a separate guarded function."
+          },
+          {
+            "id": "G12",
+            "name": "Consent-less reissuance",
+            "cat": "sig",
+            "layer": "Registry",
+            "attack": "An admin attempts to reissue a user's credential without any signed consent from the holder.",
+            "guard": "Reissuance requires a valid EIP-712 REISSUE_CONSENT voucher; no consent, no reissuance, regardless of role."
+          },
+          {
+            "id": "G13",
+            "name": "Forged consent signature",
+            "cat": "sig",
+            "layer": "Registry",
+            "attack": "A voucher is signed by a different account's key (wrong signer) and submitted for reissuance.",
+            "guard": "ECDSA recovery validates the recovered signer against the user's registered DID; mismatch causes revert."
+          },
+          {
+            "id": "G14",
+            "name": "Voucher replay (consumed nonce)",
+            "cat": "nonce",
+            "layer": "Registry",
+            "attack": "A previously consumed consent voucher is resubmitted after the first successful reissuance.",
+            "guard": "Per-user nonce increments atomically on each use; stale nonces are rejected immediately."
+          },
+          {
+            "id": "G15",
+            "name": "Suspended user reissuance",
+            "cat": "lifecycle",
+            "layer": "Registry",
+            "attack": "A valid consent voucher is submitted for a user who is currently suspended.",
+            "guard": "Reissuance checks suspension status before processing; suspended users cannot be reissued."
+          },
+          {
+            "id": "G16",
+            "name": "Premature revocation finalization",
+            "cat": "lifecycle",
+            "layer": "Registry",
+            "attack": "A manager tries to finalize a revocation immediately after requesting it, bypassing the grace period.",
+            "guard": "Finalization enforces a configurable grace period via block-timestamp check; early finalization reverts."
+          },
+          {
+            "id": "G17",
+            "name": "Reissuance during pending revocation",
+            "cat": "lifecycle",
+            "layer": "Registry",
+            "attack": "A reissuance TX is submitted while a revocation is already pending for the same user.",
+            "guard": "Reissuance checks for active revocationPending flag; blocked to prevent race-condition abuse."
+          },
+          {
+            "id": "G18",
+            "name": "Nonce double-spend",
+            "cat": "nonce",
+            "layer": "Registry",
+            "attack": "Two transactions bearing the same voucher nonce are submitted in rapid succession.",
+            "guard": "Nonce is consumed on first use; the identical second voucher reverts because expected nonce has already incremented."
+          },
+          {
+            "id": "G19",
+            "name": "Manager deadlock",
+            "cat": "rbac",
+            "layer": "Registry",
+            "attack": "All explicit managers are removed, leaving no one with manager-restricted capabilities.",
+            "guard": "Owner retains fallback manager privileges regardless of explicit manager state — deadlock is structurally impossible."
+          },
+          {
+            "id": "G20",
+            "name": "Cross-contract state desync",
+            "cat": "storage",
+            "layer": "Cross-contract",
+            "attack": "A device is removed from the consensus layer only, leaving its permissions orphaned in Permissions.sol.",
+            "guard": "Atomic revocation clears device mapping and strips all associated permissions in a single transaction."
+          },
+          {
+            "id": "G21",
+            "name": "Signature malleability (s-value)",
+            "cat": "sig",
+            "layer": "Registry",
+            "attack": "A non-canonical s-value flip is applied to an otherwise valid EIP-712 signature to forge a new valid-looking sig.",
+            "guard": "Signature recovery rejects non-canonical s-values (s > secp256k1n/2), enforcing strict EIP-2 compliance."
+          },
+          {
+            "id": "G22",
+            "name": "Malformed payload bloat",
+            "cat": "storage",
+            "layer": "Registry",
+            "attack": "A 50 KB junk DID or CID payload is submitted to enrollment, attempting a gas exhaustion attack.",
+            "guard": "Oversized payload exceeds block gas limit; transaction reverts before any state mutation occurs."
+          }
+        ]
+      }
+    },
+    {
+      "template": "temporal_analysis",
+      "data": {
+        "title": "Temporal Vulnerability Analysis",
+        "description": "Drag the timeline cursor to scrub through lifecycle phases and inspect vulnerability windows.",
+        "modes": {
+          "lc": {
+            "label": "Lifecycle phases",
+            "phases": [
+              {
+                "name": "Provisioning",
+                "duration": "Minutes",
+                "risk": "medium",
+                "color": "#FBBF24",
+                "pct": 10,
+                "vulnerabilities": [
+                  {
+                    "severity": "h",
+                    "text": "K1: Key generation entropy; CSPRNG quality determines root key security"
+                  },
+                  {
+                    "severity": "m",
+                    "text": "Admin registration error could trigger G1/G8 guard failures"
+                  }
+                ]
+              },
+              {
+                "name": "Binding",
+                "duration": "Minutes",
+                "risk": "medium",
+                "color": "#F97316",
+                "pct": 8,
+                "vulnerabilities": [
+                  {
+                    "severity": "m",
+                    "text": "K5: owner_key transmission; requires secure out-of-band channel"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "Swarm key must be distributed before IPFS sidecar starts"
+                  }
+                ]
+              },
+              {
+                "name": "Normal: idle",
+                "duration": "Hours",
+                "risk": "low",
+                "color": "#22C55E",
+                "pct": 22,
+                "vulnerabilities": [
+                  {
+                    "severity": "l",
+                    "text": "K1: Disk theft possible; mitigated by TPM binding"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "N1: Network scanning; mitigated by firewall and TLS"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "I4: Swarm key risk if kiosk is physically accessed"
+                  }
+                ]
+              },
+              {
+                "name": "CRITICAL: derivation",
+                "duration": "~10ms",
+                "risk": "critical",
+                "color": "#EF4444",
+                "pct": 5,
+                "vulnerabilities": [
+                  {
+                    "severity": "c",
+                    "text": "K3: master_seed in RAM during derivation; no TEE protection in current prototype"
+                  },
+                  {
+                    "severity": "h",
+                    "text": "K4: RAM dump outside derivation window has no impact (memory cleared immediately)"
+                  },
+                  {
+                    "severity": "n",
+                    "text": "Window is ~10ms; material is cleared post-derivation regardless"
+                  }
+                ]
+              },
+              {
+                "name": "Normal: verification",
+                "duration": "~2 seconds",
+                "risk": "medium",
+                "color": "#FBBF24",
+                "pct": 15,
+                "vulnerabilities": [
+                  {
+                    "severity": "m",
+                    "text": "Bio1: Presentation attack; mitigated by CFPAD liveness detection"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "N3: Verification interception; mitigated by TLS and ephemeral session signature"
+                  }
+                ]
+              },
+              {
+                "name": "Incident detection",
+                "duration": "Minutes–Hours",
+                "risk": "high",
+                "color": "#F97316",
+                "pct": 12,
+                "vulnerabilities": [
+                  {
+                    "severity": "h",
+                    "text": "K5: Theft-to-revocation gap; DIDs can be enumerated during this window"
+                  },
+                  {
+                    "severity": "h",
+                    "text": "Delayed admin notification extends the attacker's effective window"
+                  },
+                  {
+                    "severity": "m",
+                    "text": "P5: TX flooding may escalate before device auto-suspend triggers"
+                  }
+                ]
+              },
+              {
+                "name": "Revocation",
+                "duration": "Seconds",
+                "risk": "low",
+                "color": "#22C55E",
+                "pct": 8,
+                "vulnerabilities": [
+                  {
+                    "severity": "n",
+                    "text": "Contract-based sync provides near-instant cross-node revocation"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "G16/G17: Grace period and pending-revocation guards enforced on-chain"
+                  }
+                ]
+              },
+              {
+                "name": "Recovery",
+                "duration": "Hours",
+                "risk": "medium",
+                "color": "#FBBF24",
+                "pct": 12,
+                "vulnerabilities": [
+                  {
+                    "severity": "m",
+                    "text": "Re-provisioning must use new entropy; reuse of compromised salt creates linkable templates"
+                  },
+                  {
+                    "severity": "m",
+                    "text": "G12: Re-enrollment requires biometric presence at active kiosk"
+                  }
+                ]
+              },
+              {
+                "name": "Decommission",
+                "duration": "Minutes",
+                "risk": "medium",
+                "color": "#FBBF24",
+                "pct": 8,
+                "vulnerabilities": [
+                  {
+                    "severity": "m",
+                    "text": "Data remnants on storage medium; secure wipe protocol required"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "Node must be removed from Permissions.sol before physical decommission"
+                  }
+                ]
+              }
+            ]
+          },
+          "sk": {
+            "label": "Stolen kiosk scenario",
+            "phases": [
+              {
+                "name": "T+0: Kiosk stolen",
+                "duration": "Instant",
+                "risk": "critical",
+                "color": "#EF4444",
+                "pct": 8,
+                "vulnerabilities": [
+                  {
+                    "severity": "c",
+                    "text": "Attacker gains full physical access to kiosk hardware"
+                  },
+                  {
+                    "severity": "c",
+                    "text": "All file-based keys readable if no TPM binding (device_root_key, prism_wallet.key)"
+                  },
+                  {
+                    "severity": "c",
+                    "text": "Blockchain wallet key exposed; attacker can sign transactions as the kiosk"
+                  }
+                ]
+              },
+              {
+                "name": "T+0 – T+1h: Active attack",
+                "duration": "Up to 1 hour",
+                "risk": "critical",
+                "color": "#DC2626",
+                "pct": 30,
+                "vulnerabilities": [
+                  {
+                    "severity": "c",
+                    "text": "K1: Disk contents fully readable; all file-based key material extracted"
+                  },
+                  {
+                    "severity": "h",
+                    "text": "K5: Attacker queries blockchain using stolen wallet key, enumerating enrolled DIDs"
+                  },
+                  {
+                    "severity": "h",
+                    "text": "K8: IPFS swarm accessible; encrypted vaults can be exfiltrated (ciphertext, not plaintext)"
+                  },
+                  {
+                    "severity": "c",
+                    "text": "K6: If 2+ kiosks stolen simultaneously, QBFT threshold (f=1) may be breached"
+                  }
+                ]
+              },
+              {
+                "name": "T+1h: Admin notified",
+                "duration": "Transition",
+                "risk": "high",
+                "color": "#F97316",
+                "pct": 12,
+                "vulnerabilities": [
+                  {
+                    "severity": "h",
+                    "text": "Admin calls suspendDevice(); contract updated, kiosk blocked on-chain"
+                  },
+                  {
+                    "severity": "m",
+                    "text": "G20: Cross-contract desync must be checked and atomically remediated"
+                  }
+                ]
+              },
+              {
+                "name": "T+1h+: Kiosk blocked",
+                "duration": "Ongoing",
+                "risk": "low",
+                "color": "#22C55E",
+                "pct": 25,
+                "vulnerabilities": [
+                  {
+                    "severity": "n",
+                    "text": "Stolen kiosk cannot submit TXs or participate in consensus"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "Encrypted vault ciphertexts on stolen device remain opaque; no biometric = no decryption"
+                  },
+                  {
+                    "severity": "m",
+                    "text": "Affected users must re-enroll at an active kiosk to recover access"
+                  }
+                ]
+              },
+              {
+                "name": "Re-enrollment",
+                "duration": "Minutes",
+                "risk": "low",
+                "color": "#38BDF8",
+                "pct": 15,
+                "vulnerabilities": [
+                  {
+                    "severity": "n",
+                    "text": "User presents biometrics at active kiosk with new random salt"
+                  },
+                  {
+                    "severity": "n",
+                    "text": "New salt produces orthogonal key; all stolen material is mathematically useless"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "New DID issued on-chain; previous credential permanently invalidated"
+                  }
+                ]
+              },
+              {
+                "name": "Full recovery",
+                "duration": "Complete",
+                "risk": "low",
+                "color": "#22C55E",
+                "pct": 10,
+                "vulnerabilities": [
+                  {
+                    "severity": "n",
+                    "text": "All credentials rotated; attacker's stolen material has zero residual utility"
+                  },
+                  {
+                    "severity": "l",
+                    "text": "Post-incident: review IPFS exfiltration logs and validator consensus health metrics"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "chapters": [
+    {
+      "id": "chap_01",
+      "title": "The Societal Problem",
+      "subtitle": "The hidden cost of untracked teacher absences in PH classrooms",
+      "file": "01_societal_problem.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_02",
+      "title": "Current Solutions",
+      "subtitle": "On-site and remote approaches used in attendance monitoring today",
+      "file": "02_current_solutions.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_03",
+      "title": "Engineering Challenges",
+      "subtitle": "How people cheat, what stops them, and what's still missing",
+      "file": "03_challenges_and_solutions.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_04",
+      "title": "Statement of the Problem",
+      "subtitle": "The core tension this thesis addresses",
+      "file": "04_problem_statement.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_05",
+      "title": "Objectives",
+      "subtitle": "General & specific objectives",
+      "file": "05_objectives.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_06",
+      "title": "Hypothesis Framework",
+      "subtitle": "Null vs alternative",
+      "file": "06_hypothesis.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_07",
+      "title": "Theoretical Framework",
+      "subtitle": "Biometrics, blockchain, SSI",
+      "file": "08_theories.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_09",
+      "title": "Software Architecture",
+      "subtitle": "From capture to on-chain trust",
+      "file": "09_system_architecture.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_10",
+      "title": "Hardware Infrastructure",
+      "subtitle": "Edge nodes & sensors",
+      "file": "10_hardware.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_11",
+      "title": "IPFS Key Management",
+      "subtitle": "Data isolation & swarm architecture",
+      "file": "11_ipfs_key_management.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_12",
+      "title": "Access Control & Audit",
+      "subtitle": "Device-first RBAC architecture",
+      "file": "12_access_control.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_13",
+      "title": "Threat Model",
+      "subtitle": "Systematic vulnerability analysis",
+      "file": "13_threat_model.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_16",
+      "title": "Deployed Hardware",
+      "subtitle": "Kiosk validators & containerized services",
+      "file": "15_hardware_kiosk.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_17",
+      "title": "Software Stack",
+      "subtitle": "Dependency manifest & interaction utilities",
+      "file": "16_software_stack.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_18",
+      "title": "Blockchain Configuration",
+      "subtitle": "Genesis parameters & cryptographic hierarchy",
+      "file": "17_blockchain_config.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_19",
+      "title": "Biometric Pipeline",
+      "subtitle": "Facial embedder & fuzzy extractor configuration",
+      "file": "18_biometric_config.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_20",
+      "title": "Testing Overview",
+      "subtitle": "Test plan & validation strategy",
+      "file": "19_testing_overview.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_21",
+      "title": "SO1: Biometric Validation",
+      "subtitle": "Embedding accuracy, template privacy & hierarchical fusion",
+      "file": "20_so1_biometric.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_22",
+      "title": "SO2: Blockchain Integrity",
+      "subtitle": "Gas determinism, consensus & scalability",
+      "file": "21_so2_blockchain.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_23",
+      "title": "SO3: Credential Lifecycle",
+      "subtitle": "Access control, non-repudiation & leakage audit",
+      "file": "22_so3_credential.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_24",
+      "title": "SO4: System Performance",
+      "subtitle": "Latency, fault tolerance & factorial TPS",
+      "file": "23_so4_performance.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_25",
+      "title": "Hypothesis Test",
+      "subtitle": "2×2 factorial; credential-layer enforcement",
+      "file": "24_hypothesis_test.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_26",
+      "title": "SO1 Results",
+      "subtitle": "Face Recognition, Fingerprint Quality & Hierarchical Fusion",
+      "file": "25_so1_results.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_27",
+      "title": "SO2 Results",
+      "subtitle": "Gas determinism, consensus & throughput scaling",
+      "file": "26_so2_results.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_28",
+      "title": "SO3 Results",
+      "subtitle": "Guard matrix, non-repudiation & replay protection",
+      "file": "27_so3_results.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_29",
+      "title": "SO4 Results",
+      "subtitle": "Kiosk latency, IPFS cost, live cohort & factorial TPS",
+      "file": "28_so4_results.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_30",
+      "title": "Hypothesis Validation",
+      "subtitle": "Factorial validation, robustness & key takeaways",
+      "file": "29_hypothesis_discussion.json",
+      "content_type": "json"
+    },
+    {
+      "id": "chap_31",
+      "title": "Summary & Recommendations",
+      "subtitle": "Contributions, limitations & future work",
+      "file": "30_summary_conclusions.json",
+      "content_type": "json"
+    }
+  ]
+}

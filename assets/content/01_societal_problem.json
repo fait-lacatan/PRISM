@@ -1,0 +1,83 @@
+{
+  "id": "societal_problem",
+  "title": "Absenteeism & Tardiness in the Philippine Education Sector",
+  "subtitle": "The hidden cost of untracked teacher absences in PH classrooms",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "hero_stat",
+      "data": {
+        "stat_value": 40,
+        "stat_suffix": "%",
+        "stat_label_top": "More than",
+        "stat_label_bottom": "of surveyed students across 6 countries report frequent teacher absences or late arrivals",
+        "insight_text": "Weak tracking systems leave most absences undocumented and unaddressed. Teacher absenteeism erodes learning time and quietly lowers academic standards.",
+        "mini_stats": [
+          {
+            "value": "Manual",
+            "label": "Primary monitoring method in PH schools"
+          },
+          {
+            "value": "High",
+            "label": "Risk of attendance data manipulation"
+          }
+        ]
+      }
+    },
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "A global operations failure",
+        "content": "Instructor absenteeism and tardiness persist as operational failures across educational institutions worldwide, reducing teaching time and limiting syllabus coverage among teaching personnel.\n\nWithout reliable attendance reports, institutions lack the evidentiary basis they need to enforce accountability for unverified absences."
+      }
+    },
+    {
+      "template": "card_stack",
+      "data": {
+        "title": "What does this cost the education sector?",
+        "cards": [
+          {
+            "icon": "schedule",
+            "title": "Loss of instructional time",
+            "desc": "Every absent hour is a lesson students never receive. Cumulative gaps compound over the school year, creating irreversible learning deficits across cohorts."
+          },
+          {
+            "icon": "menu_book",
+            "title": "Incomplete syllabus coverage",
+            "desc": "Curriculum gaps build across semesters, leaving students underprepared for the next level. Teachers rush to catch up, sacrificing depth for breadth."
+          },
+          {
+            "icon": "trending_down",
+            "title": "Decline in learning outcomes",
+            "desc": "Academic standards drop when instruction is inconsistent, affecting test scores and overall development. The Philippines ranks among PISA's lowest performers in reading and math."
+          },
+          {
+            "icon": "desktop_windows",
+            "title": "Disruption of institutional operations",
+            "desc": "Schedules, substitute allocation, and policy enforcement break down without reliable attendance data. Schools cannot measure what they cannot observe."
+          }
+        ]
+      }
+    },
+    {
+      "template": "region_map",
+      "data": {
+        "title": "East Asia & the Pacific",
+        "highlights": [
+          {
+            "value": "Systemic",
+            "label": "Absenteeism is a shared regional challenge"
+          },
+          {
+            "value": "Ghost Attendance",
+            "label": "Allows paper presence despite physical absence."
+          },
+          {
+            "value": "Policy Gap",
+            "label": "Weak data keeping, accountability not enforced"
+          }
+        ]
+      }
+    }
+  ]
+}

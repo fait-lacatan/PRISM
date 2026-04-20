@@ -1,0 +1,128 @@
+{
+  "id": "development_stage",
+  "title": "Biometric Pipeline",
+  "subtitle": "Facial embedder & fuzzy extractor configuration",
+  "accentColor": "#00A3FF",
+  "sections": [
+    {
+      "id": "bio_config",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "Two biometric subsystems were deployed within the AI Service container: the STL-trained EfficientNet-B0 facial embedder and the sample-then-lock fingerprint fuzzy extractor. The facial embedder was deployed as a frozen checkpoint produced at the end of a grid search over the STL linkability weight λ and optimization margin, with the best configuration selected by cancelable-domain False Match Rate (FMR) rather than raw Equal Error Rate (EER)."
+          },
+          {
+            "type": "table",
+            "caption": "Facial Recognition Training Configuration",
+            "headers": [
+              "Parameter",
+              "Deployed Value"
+            ],
+            "rows": [
+              [
+                "Backbone",
+                "EfficientNet-B0"
+              ],
+              [
+                "Training Objective",
+                "Secure Triplet Loss with linkability regularization"
+              ],
+              [
+                "Triplet Mining Strategy",
+                "Online semi-hard negative mining"
+              ],
+              [
+                "Optimization Margin (m)",
+                "0.1"
+              ],
+              [
+                "Linkability Weight (λ)",
+                "Selected via grid search; best by cancelable-domain FMR"
+              ],
+              [
+                "Pre-training Source Domain",
+                "YouTube Faces Database"
+              ],
+              [
+                "Fine-tuning Target Domain",
+                "Local institutional dataset — PUP Main Campus"
+              ],
+              [
+                "Fine-tuning Split (per subject)",
+                "60 samples: 30 controlled, 30 uncontrolled"
+              ],
+              [
+                "Enrolled Subjects (fine-tune)",
+                "10 subjects (test split)"
+              ],
+              [
+                "Verification Distance Metric",
+                "L2 (Euclidean) on cancelable embeddings"
+              ],
+              [
+                "PAD Threshold",
+                "Calibrated on local samples against deployment environment"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The fingerprint fuzzy extractor operated on binarized DeepPrint minutiae descriptors under the Sample-then-Lock construction. Its two structural parameters: (a) locker count L and (b) feature bits per locker k, were selected from a grid search over L ∈ {512, 1024, 2048} and k ∈ {4, 8, 16}, evaluated across voting-ratio-stratified quality tiers, yielding a deployed configuration of L = 1024, k = 8."
+          },
+          {
+            "type": "table",
+            "caption": "Sample-then-Lock Fuzzy Extractor Configuration",
+            "headers": [
+              "Parameter",
+              "Deployed Value"
+            ],
+            "rows": [
+              [
+                "Construction",
+                "Sample-then-Lock"
+              ],
+              [
+                "Feature Input",
+                "Binarized DeepPrint minutiae descriptors"
+              ],
+              [
+                "Error-Correction Scheme",
+                "Reed-Solomon (RSCodec via reedsolo); tolerance bounded to scanner noise threshold"
+              ],
+              [
+                "Locker Count (L)",
+                "L ∈ {512, 1024, 2048}"
+              ],
+              [
+                "Feature Bits (k)",
+                "k ∈ {4, 8, 16}"
+              ],
+              [
+                "Deployed Configuration",
+                "L = 1024, k = 8"
+              ],
+              [
+                "Quality Proxy",
+                "Voting ratio; median-based stratification"
+              ],
+              [
+                "Post-extraction KDF",
+                "HKDF-SHA256 with context-specific salt"
+              ],
+              [
+                "Vault Cipher",
+                "Fernet (AES-128-CBC + HMAC-SHA256)"
+              ],
+              [
+                "Payload Cipher",
+                "AES-GCM for authenticated blockchain payloads"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

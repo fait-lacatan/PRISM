@@ -1,0 +1,114 @@
+{
+  "id": "development_stage",
+  "title": "Hardware Deployment",
+  "subtitle": "Kiosk validators & containerized services",
+  "accentColor": "#00A3FF",
+  "sections": [
+    {
+      "id": "hw_intro",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "image",
+            "aspect_ratio": "4:3",
+            "images": [
+              {
+                "src": "assets/images/hardware/kiosk_1.jpg",
+                "caption": "Hardware prototype overview"
+              },
+              {
+                "src": "assets/images/hardware/kiosk_2.jpg",
+                "caption": "Cluster setup"
+              }
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The four-node validator cluster was provisioned from identical commodity hardware. Each unit was built around an HP ProDesk 600 G2 Desktop Mini PC upgraded to 16 GB DDR4-3200 RAM. The expanded RAM allocation ensured that concurrent model inference, IPFS pinning, and blockchain state persistence did not compete for memory bandwidth during enrollment and verification workflows. Each on-site unit integrated three peripherals on a custom panel: the GT-521F52 fingerprint scanner at the base, the HD webcam above the touch display, and the ProDesk tucked behind the panel."
+          },
+          {
+            "type": "table",
+            "caption": "Standardized Commodity Hardware",
+            "headers": [
+              "Component",
+              "Specification"
+            ],
+            "rows": [
+              [
+                "Form Factor",
+                "HP ProDesk 600 G2 Desktop Mini PC"
+              ],
+              [
+                "Operating System",
+                "Ubuntu 22.04.3 LTS (kernel 5.15)"
+              ],
+              [
+                "Processor",
+                "Intel Core i5 6th generation, 4 cores"
+              ],
+              [
+                "Memory",
+                "16 GB DDR4-3200"
+              ],
+              [
+                "Storage",
+                "256 GB NVMe SSD"
+              ],
+              [
+                "Fingerprint Sensor",
+                "ADHTech GT-521F52 optical scanner (serial / USB 2.0)"
+              ],
+              [
+                "Facial Camera",
+                "Standard HD USB webcam (1080p)"
+              ],
+              [
+                "Display Interface",
+                "Waveshare 7-inch HDMI LCD touch panel"
+              ],
+              [
+                "Container Engine",
+                "Docker v24.0.0"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "Three containerized services were co-located on each node via Docker, directly realizing the resource-management design. The AI service encapsulated all biometric processing: fingerprint fuzzy extraction, facial embedding inference, template comparison, and the graphical kiosk interface. CPU affinity constraints (cores 0–1) pinned neural-network inference workloads to dedicated cores, preventing inference spikes from starving the consensus validator."
+          },
+          {
+            "type": "table",
+            "caption": "Containerized Services Deployment",
+            "headers": [
+              "Service",
+              "Image / Runtime",
+              "Resource Binding"
+            ],
+            "rows": [
+              [
+                "AI Service",
+                "Custom Python 3.10 image (gevent WSGI)",
+                "CPU cores 0–1, /dev/ttyUSB0 (fingerprint), /dev/video0 (camera) passthrough"
+              ],
+              [
+                "Consensus Validator",
+                "Geth (Quorum) v23.4.0",
+                "CPU core 2, Port 30303 (P2P), Port 8545 (RPC)"
+              ],
+              [
+                "Decentralized Storage Sidecar",
+                "Kubo (IPFS) v0.21.0",
+                "CPU core 3, Port 4001 (swarm), Port 5001 (API)"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The four nodes were interconnected in a star topology via a dedicated gigabit switch. Two peer-to-peer overlays operated concurrently over the same physical links: the Quorum blockchain execution layer on port 30303 and the private IPFS swarm on port 4001. These overlays were logically independent, where disruption to swarm participation did not halt blockchain consensus, and vice versa."
+          }
+        ]
+      }
+    }
+  ]
+}

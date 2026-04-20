@@ -1,0 +1,271 @@
+{
+  "id": "design_stage",
+  "title": "Access Control & Audit",
+  "subtitle": "Device-first RBAC architecture",
+  "accentColor": "#F59E0B",
+  "sections": [
+    {
+      "template": "access_matrix",
+      "data": {
+        "title": "Role-Based Access Control Matrix",
+        "description": "Edge devices must be registered in Permissions.sol and explicitly linked to an enode in Registry.sol before receiving application-layer capability flags.",
+        "roles": [
+          {
+            "name": "Owner",
+            "values": [
+              "Add/Remove/Ban",
+              "Grant/Revoke Managers",
+              "Authorized",
+              "Authorized[^1]",
+              "Authorized",
+              "Authorized"
+            ]
+          },
+          {
+            "name": "Manager",
+            "values": [
+              "Add/Remove/Ban",
+              "Grant/Revoke Flags",
+              "Authorized[^2]",
+              "Authorized[^2]",
+              "Authorized",
+              "Authorized[^2]"
+            ]
+          },
+          {
+            "name": "Kiosk",
+            "flags": "(canEnroll & canRecord)",
+            "values": [
+              "Denied",
+              "Denied",
+              "Authorized",
+              "Denied",
+              "Denied",
+              "Authorized"
+            ]
+          },
+          {
+            "name": "Remote Client",
+            "flags": "(canRecord)",
+            "values": [
+              "Denied",
+              "Denied",
+              "Denied",
+              "Denied",
+              "Denied",
+              "Authorized"
+            ]
+          },
+          {
+            "name": "User",
+            "flags": "(Remote Self)",
+            "values": [
+              "Denied",
+              "Denied",
+              "Denied",
+              "Provides Consent Only",
+              "Request Only",
+              "Authorized[^3]"
+            ]
+          },
+          {
+            "name": "Unauthenticated/Banned",
+            "values": [
+              "Denied",
+              "Denied",
+              "Denied",
+              "Denied",
+              "Denied",
+              "Denied"
+            ]
+          }
+        ],
+        "columns": [
+          "Consensus Node Mgmt",
+          "Device Privileges",
+          "Credential Enroll",
+          "Credential Reissue",
+          "Credential Revoke",
+          "Attendance Record"
+        ],
+        "footnotes": [
+          "[^1]: With consent from user via cryptographic signing using the user's private key.",
+          "[^2]: Only if the corresponding capability flag has been explicitly granted by the Owner or another Manager.",
+          "[^3]: For Self"
+        ]
+      }
+    },
+    {
+      "template": "audit_trail",
+      "data": {
+        "title": "Audit Trail Events",
+        "description": "All security-critical operations emit on-chain events natively from the smart contracts.",
+        "contracts": [
+          {
+            "name": "Registry.sol",
+            "color": "#38BDF8",
+            "events": [
+              {
+                "name": "UserEnrolled",
+                "params": "user, did, infoCID",
+                "trigger": "New identity enrolled"
+              },
+              {
+                "name": "UserReissued",
+                "params": "user, reissuer, did, infoCID",
+                "trigger": "Credential reissued with consent"
+              },
+              {
+                "name": "StatusChanged",
+                "params": "user, active",
+                "trigger": "Profile activated or deactivated"
+              },
+              {
+                "name": "RevocationRequested",
+                "params": "user, requester",
+                "trigger": "Revocation initiated"
+              },
+              {
+                "name": "RevocationFinalized",
+                "params": "user, finalizer",
+                "trigger": "Revocation completed (consent or grace period)"
+              },
+              {
+                "name": "RevocationCancelled",
+                "params": "user, canceller",
+                "trigger": "Pending revocation cancelled"
+              },
+              {
+                "name": "UserBanned",
+                "params": "user, admin",
+                "trigger": "Permanent user ban"
+              },
+              {
+                "name": "UserSuspended",
+                "params": "user, suspender, reason",
+                "trigger": "Temporary user suspension"
+              },
+              {
+                "name": "UserReinstated",
+                "params": "user, reinstater",
+                "trigger": "User suspension lifted"
+              },
+              {
+                "name": "DeviceSuspended",
+                "params": "device, reason",
+                "trigger": "Device temporarily suspended"
+              },
+              {
+                "name": "DeviceReinstated",
+                "params": "device",
+                "trigger": "Device suspension lifted"
+              },
+              {
+                "name": "DeviceBanned",
+                "params": "device, admin",
+                "trigger": "Permanent device ban"
+              },
+              {
+                "name": "KioskEnodeRevoked",
+                "params": "device, enodeHash, revoker",
+                "trigger": "Kiosk enode unlinked"
+              },
+              {
+                "name": "RoleChanged",
+                "params": "actor, role, status",
+                "trigger": "Capability flag toggled"
+              },
+              {
+                "name": "EmergencyStop",
+                "params": "status",
+                "trigger": "System pause toggled"
+              },
+              {
+                "name": "OwnershipTransferred",
+                "params": "previousOwner, newOwner",
+                "trigger": "Contract ownership transferred"
+              }
+            ]
+          },
+          {
+            "name": "Attendance.sol",
+            "color": "#22C55E",
+            "events": [
+              {
+                "name": "Logged",
+                "params": "user, did, infoCID, time, onSite, status",
+                "trigger": "Attendance recorded"
+              }
+            ]
+          },
+          {
+            "name": "Permissions.sol",
+            "color": "#A78BFA",
+            "events": [
+              {
+                "name": "NodeAdded",
+                "params": "enodeHash, enode",
+                "trigger": "Validator node Authorized"
+              },
+              {
+                "name": "NodeRemoved",
+                "params": "enodeHash",
+                "trigger": "Validator node deAuthorized"
+              },
+              {
+                "name": "NodeBanned",
+                "params": "enodeHash, admin",
+                "trigger": "Validator node permanently banned"
+              },
+              {
+                "name": "AdminChanged",
+                "params": "oldAdmin, newAdmin",
+                "trigger": "Permissions admin transferred"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template": "metadata_policy",
+      "data": {
+        "title": "Operational Metadata Policy",
+        "description": "To ensure system accountability without compromising biometric privacy, PRISM's Registry and Attendance contracts log the following non-PII metadata on-chain:",
+        "items": [
+          {
+            "name": "address",
+            "source": "Submitting Wallet",
+            "desc": "The Ethereum address of the user or the submitting kiosk."
+          },
+          {
+            "name": "did",
+            "source": "User Profile",
+            "desc": "Decentralized Identifier string representing the enrolled identity."
+          },
+          {
+            "name": "infoCID",
+            "source": "IPFS Pointer",
+            "desc": "The encrypted IPFS blob containing the actual biometric data."
+          },
+          {
+            "name": "timestamp",
+            "source": "Block Time",
+            "desc": "The standard block timestamp recorded natively at the moment of the transaction."
+          },
+          {
+            "name": "onSite",
+            "source": "Auth Context",
+            "desc": "A boolean derived from canRecord(msg.sender). Always true at emission — unAuthorized devices cause the transaction to revert."
+          },
+          {
+            "name": "status",
+            "source": "Auth Event",
+            "desc": "A string representing the success or failure reason of the verification attempt."
+          }
+        ],
+        "warning": "Biometric templates and raw sensor inputs are NEVER logged to the database, emitted in smart contract events, or exposed in metadata."
+      }
+    }
+  ]
+}

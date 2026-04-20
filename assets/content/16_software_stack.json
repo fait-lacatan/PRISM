@@ -1,0 +1,231 @@
+{
+  "id": "development_stage",
+  "title": "Software Stack",
+  "subtitle": "Dependency manifest & interaction utilities",
+  "accentColor": "#00A3FF",
+  "sections": [
+    {
+      "id": "interaction_details",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The system provided three distinct interaction modalities, each functioning as a controlled gateway into the on-chain state machine. No interaction layer held embedded administrative authority; all lifecycle operations were executed exclusively through smart-contract calls validated on-chain."
+          },
+          {
+            "type": "prose",
+            "text": "A web-form enrollment utility was deployed on the cluster and made accessible via a shared local hotspot. Participants scanned a QR code with their personal device, which automatically populated enrollment metadata while keeping the private key strictly local. The utility pre-generated a reissuance voucher and a revocation voucher alongside the enrollment voucher, giving each participant the complete set of lifecycle credentials. Each voucher encoded an EIP-712 typed-data payload carrying the target user address, an expiry timestamp, and the current per-user nonce."
+          }
+        ]
+      }
+    },
+    {
+      "id": "enroll_carousel",
+      "template": "card_stack",
+      "data": {
+        "subtitle": "Hotspot Enrollment Utility",
+        "description": "Mobile-optimized web interface for local cluster enrollment and voucher management.",
+        "cards": [
+          {
+            "id": "e1",
+            "image": "assets/images/software/enroll_util/identity_01_host.png"
+          },
+          {
+            "id": "form_empty",
+            "image": "assets/images/software/enroll_util/identity_02_form_empty.png"
+          },
+          {
+            "id": "form_filled",
+            "image": "assets/images/software/enroll_util/identity_03_form_filled.png"
+          },
+          {
+            "id": "result",
+            "image": "assets/images/software/enroll_util/identity_04_result.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kiosk_details",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The kiosk interface was built with Eel and served from the AI Service container to a sandboxed Chromium instance on the Waveshare display. The enrollment flow presented a four-step progress indicator (liveness check, fingerprint capture, facial capture, on-chain anchoring); the verification flow showed a single prompt and returned an accept/reject result within the measured latency window."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kiosk_carousel",
+      "template": "card_stack",
+      "data": {
+        "subtitle": "Interactive zero-trust terminal",
+        "description": "Guided enrollment and verification workflows running locally on the isolated node.",
+        "cards": [
+          {
+            "id": "k1",
+            "image": "assets/images/software/kiosk/01_idle_state.png"
+          },
+          {
+            "id": "input_filled",
+            "image": "assets/images/software/kiosk/02_input_filled.png"
+          },
+          {
+            "id": "scanning_state",
+            "image": "assets/images/software/kiosk/03_scanning_state.png"
+          },
+          {
+            "id": "success_state",
+            "image": "assets/images/software/kiosk/04_success_state.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin_deps",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The administrative dashboard consumed indexed ledger events to reconstruct the historical activity log, allowing administrators to audit enrollment, attendance, and revocation events without querying raw blockchain state directly. It displayed per-node validator status and block height in real time, sourced from the Quorum JSON-RPC endpoint. All administrative actions were cryptographically recorded on the ledger, producing a tamper-evident audit trail."
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin_dash",
+      "template": "card_stack",
+      "data": {
+        "subtitle": "Decentralized control center",
+        "description": "Full-stack interface indexing ledger operations into a human-readable oversight layer natively decoupled from isolated local hardware interfaces.",
+        "cards": [
+          {
+            "id": "s1",
+            "image": "assets/images/software/admin/admin_01_dashboard.png"
+          },
+          {
+            "id": "records",
+            "image": "assets/images/software/admin/admin_02_records.png"
+          },
+          {
+            "id": "users",
+            "image": "assets/images/software/admin/admin_03_users.png"
+          },
+          {
+            "id": "scheduler",
+            "image": "assets/images/software/admin/admin_04_scheduler.png"
+          },
+          {
+            "id": "registry",
+            "image": "assets/images/software/admin/admin_05_registry.png"
+          },
+          {
+            "id": "consensus",
+            "image": "assets/images/software/admin/admin_06_consensus.png"
+          },
+          {
+            "id": "audit",
+            "image": "assets/images/software/admin/admin_07_audit.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sw_deps",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The deployed software stack comprised pinned dependencies spanning AI frameworks, cryptographic primitives, blockchain tooling, and interface bridges. All version numbers were drawn directly from the production deployment manifest. No emulation or staging variants were substituted."
+          },
+          {
+            "type": "table",
+            "caption": "Dependency Manifest of the Deployed Software Stack",
+            "headers": [
+              "Domain",
+              "Library / Tool",
+              "Version"
+            ],
+            "rows": [
+              [
+                "AI Framework",
+                "facenet-pytorch (PyTorch backend)",
+                "2.6.0"
+              ],
+              [
+                "AI Framework",
+                "EfficientNet-B0",
+                "0.9.x"
+              ],
+              [
+                "Image Processing",
+                "opencv-python",
+                "4.10"
+              ],
+              [
+                "Biometric Pipeline",
+                "DeepPrint fingerprint extractor (custom PyTorch port)",
+                "–"
+              ],
+              [
+                "Template Protection",
+                "Secure Triplet Loss training objective",
+                "–"
+              ],
+              [
+                "Cryptographic KDF",
+                "Python cryptography — HKDF-SHA256, AES-128-CBC / Fernet, AES-GCM",
+                "46.0.3"
+              ],
+              [
+                "Error Correction",
+                "reedsolo (Reed-Solomon RSCodec)",
+                "1.7.0"
+              ],
+              [
+                "Smart Contracts",
+                "Solidity",
+                "^0.8.0"
+              ],
+              [
+                "Web3 Integration",
+                "Web3.py",
+                "6.x"
+              ],
+              [
+                "Blockchain Runtime",
+                "Geth (Quorum, QBFT)",
+                "23.4.0"
+              ],
+              [
+                "Decentralized Storage",
+                "Kubo (IPFS)",
+                "0.21.0"
+              ],
+              [
+                "Kiosk Interface",
+                "Eel (Python–Chromium bridge)",
+                "0.14.x"
+              ],
+              [
+                "Admin Dashboard",
+                "Flask",
+                "3.x"
+              ],
+              [
+                "Container Engine",
+                "Docker / Docker Compose",
+                "24.0.0"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

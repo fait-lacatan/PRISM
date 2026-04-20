@@ -1,0 +1,243 @@
+{
+  "id": "results_and_discussion",
+  "title": "Hypothesis Validation",
+  "subtitle": "Factorial validation, robustness & key takeaways",
+  "accentColor": "#10B981",
+  "sections": [
+    {
+      "id": "hypothesis_discussion",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The hypothesis test evaluates the core architectural claim: that the proposed system's credential-layer enforcement makes biometric revocation structurally binding. The 2×2 factorial matrix below crosses Architecture (Parallel Fusion baseline vs. Proposed System) with Credential State (Active vs. Revoked) to isolate the interaction effect."
+          },
+          {
+            "type": "prose",
+            "text": "The results are unambiguous. The parallel fusion baseline grants 100% access regardless of credential state. The proposed system grants 68.5% access under active credentials (reflecting the FNMR trade-off from the fingerprint gate), but drops to exactly 0% under revoked credentials. The smart contract reverts before the biometric pipeline is even invoked."
+          },
+          {
+            "type": "table",
+            "caption": "Genuine Attendance Verification Rates",
+            "headers": [
+              "Architecture",
+              "Credential-Active",
+              "Credential-Revoked"
+            ],
+            "rows": [
+              [
+                "Parallel Fusion",
+                "200 / 200 (100%)",
+                "200 / 200 (100%)"
+              ],
+              [
+                "Proposed",
+                "137 / 200 (68.5%)",
+                "0 / 200 (0%)"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "Because Cell D (Proposed × Revoked) contains zero successes, standard logistic regression cannot converge. Firth's penalized logistic regression was used instead, converging in 11 iterations. The interaction term Architecture × State is statistically significant at p = 0.006 < 0.05, rejecting H₀."
+          },
+          {
+            "type": "table",
+            "caption": "Firth's Penalized Logistic Regression",
+            "headers": [
+              "Variable",
+              "β",
+              "SE",
+              "OR",
+              "p-value",
+              "Verdict"
+            ],
+            "rows": [
+              [
+                "Intercept",
+                "5.994",
+                "1.420",
+                "401.0",
+                "2.42 × 10⁻⁵",
+                "Significant"
+              ],
+              [
+                "Architecture [Proposed]",
+                "−5.221",
+                "1.428",
+                "0.005",
+                "2.55 × 10⁻⁴",
+                "Significant"
+              ],
+              [
+                "State [Revoked]",
+                "−0.000",
+                "2.008",
+                "1.000",
+                "1.000",
+                "Not Significant"
+              ],
+              [
+                "Architecture × State",
+                "−6.767",
+                "2.463",
+                "0.001",
+                "6.02 × 10⁻³",
+                "Significant"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The regression coefficients tell a precise story. The Intercept (β=5.994, OR=401.0) indicates near-certain access in the parallel baseline under valid credentials; Cell A achieves 100% acceptance. Architecture [Proposed] (β=−5.221) quantifies the usability cost of hierarchical gating: 68.5% versus 100% acceptance under valid credentials. State [Revoked] (β≈0, p=1.0) is the most revealing term: credential state has exactly zero effect in the parallel architecture, the precise statistical expression of its structural blindness. The interaction term Architecture × State (β=−6.767) captures the proposed system's unique behavior: acceptance drops from 68.5% → 0% upon revocation because DID resolution prevents the biometric pipeline from executing entirely."
+          },
+          {
+            "type": "prose",
+            "text": "The fusion weight sweep confirms that the interaction effect is not an artifact of a specific baseline tuning. The 2×2 design was re-run at three different parallel fusion weights (α = 0.3, 0.5, 0.7) with independent samples per weight. The interaction remains significant at all three levels and actually strengthens at α = 0.7 (p = 1.38 × 10⁻³) where the baseline's slight degradation (99.5% valid, 97.5% revoked) produces a stronger contrast with the proposed system's absolute enforcement."
+          },
+          {
+            "type": "table",
+            "caption": "Fusion Weight Sweep",
+            "headers": [
+              "Baseline α",
+              "Valid Access%",
+              "Revoked Access%",
+              "Interaction p",
+              "Verdict"
+            ],
+            "rows": [
+              [
+                "0.3",
+                "100.00",
+                "100.00",
+                "6.02 × 10⁻³",
+                "Significant"
+              ],
+              [
+                "0.5 (ref)",
+                "100.00",
+                "100.00",
+                "6.02 × 10⁻³",
+                "Significant"
+              ],
+              [
+                "0.7",
+                "99.50",
+                "97.50",
+                "1.38 × 10⁻³",
+                "Stronger"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The clustering sensitivity analysis addresses the non-independence concern: 50 users each contribute 4 attempts, so outcomes within the same user may be correlated. Three bounding scenarios collapse the per-attempt data to per-user outcomes under worst-case, moderate, and best-case assumptions. The conclusion holds under all bounding scenarios, including the most conservative clustering treatment (worst-case: p = 0.0298)."
+          },
+          {
+            "type": "table",
+            "caption": "Cluster Sensitivity Analysis",
+            "headers": [
+              "Clustering Assumption",
+              "Cell C",
+              "Interaction β",
+              "p-value",
+              "Verdict"
+            ],
+            "rows": [
+              [
+                "Worst-case (15 users fail all 4)",
+                "35/50 (70.0%)",
+                "−5.444",
+                "2.98 × 10⁻²",
+                "Significant"
+              ],
+              [
+                "Moderate (~8 users fail all)",
+                "42/50 (84.0%)",
+                "−6.225",
+                "1.33 × 10⁻²",
+                "Significant"
+              ],
+              [
+                "Best-case (no user fails all 4)",
+                "50/50 (100.0%)",
+                "−9.230",
+                "1.30 × 10⁻³",
+                "Strongest"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The fingerprint gate that causes genuine rejections (FNMR 31.5%) is the same mechanism that enforces credential revocation (FMR 0.00%). These are inseparable; eliminating the gate would restore 100% genuine acceptance but permanently disable revocation enforcement. This is not a bug to be fixed; it is the architectural cost of structural security."
+          },
+          {
+            "type": "prose",
+            "text": "A score-level fusion system has no channel through which credential state can influence the matching decision. The empirical State p-value of 1.0 is the precise statistical expression of this blindness: revoked credentials continue granting access at a 100% rate. This is not a misconfiguration; it is a structural property of the architecture itself."
+          },
+          {
+            "type": "prose",
+            "text": "The distinction between the proposed DID gate and a conventional post-hoc credential check is critical. Both deny access for revoked credentials, but they differ in exposure: a post-hoc check still processes the biometric template before checking credential state, creating an exposure window where cancelable embeddings are computed and handled. The DID gate prevents the biometric pipeline from executing at all: the template is never processed, never compared, and never exposed in memory."
+          },
+          {
+            "type": "table",
+            "caption": "DID Gate vs. Post-Hoc Credential Check",
+            "headers": [
+              "Property",
+              "Post-Hoc Check",
+              "Proposed DID Gate"
+            ],
+            "rows": [
+              [
+                "Access denied for revoked credential",
+                "✅",
+                "✅"
+              ],
+              [
+                "Biometric template processed for revoked user",
+                "❌ Yes (exposure window)",
+                "✅ Never"
+              ],
+              [
+                "Cancelable embedding computed",
+                "❌ Yes",
+                "✅ Never"
+              ],
+              [
+                "Independent of crypto assumptions",
+                "❌ No",
+                "✅ Yes"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The defense layers (cancelable biometrics and the DID pipeline gate) are complementary, not interchangeable. Cancelable biometrics provide a cryptographic guarantee: once processed, the template is non-invertible and unlinkable across salts. The DID gate provides a structural guarantee: the template is never processed for revoked credentials. Combined, the system does not collapse if either layer is independently compromised."
+          },
+          {
+            "type": "table",
+            "headers": [
+              "Layer",
+              "Guarantee"
+            ],
+            "rows": [
+              [
+                "Cancelable Biometrics (STL)",
+                "Cryptographic: processed template is non-invertible & unlinkable across salts"
+              ],
+              [
+                "DID Pipeline Gate",
+                "Structural: template is never processed for revoked credentials"
+              ],
+              [
+                "Combined",
+                "Layered; does not collapse if either is independently compromised"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

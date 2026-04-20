@@ -1,0 +1,76 @@
+{
+  "id": "current_solutions",
+  "title": "Presence & Timeliness Tracking Methods",
+  "subtitle": "On-site and remote approaches used in attendance monitoring today",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "Institutions do track attendance",
+        "content": "Many providers have deployed attendance systems across two modes of delivery to address this accountability issue. For on-site verification, they use biometric scanners and token-based systems to track timeliness and presence. In remote learning environments, administrators rely on online forms and session screenshots to document participation in scheduled classes. Both approaches produce digital attendance records and nominally close the monitoring issue."
+      }
+    },
+    {
+      "template": "filterable_card_grid",
+      "data": {
+        "filters": [
+          "All methods",
+          "On-site",
+          "Remote"
+        ],
+        "cards": [
+          {
+            "title": "ID card systems",
+            "filter": "On-site",
+            "icon": "badge",
+            "front_desc": "Physical or RFID-enabled cards scanned at entry points.",
+            "back_desc": "Fast, low-friction check-in with hardware dependency. Best for high-footfall corridors where speed matters. Vulnerable to card sharing and proxy attendance."
+          },
+          {
+            "title": "Biometric check-ins",
+            "filter": "On-site",
+            "icon": "fingerprint",
+            "front_desc": "Fingerprint, facial, or iris recognition at station.",
+            "back_desc": "High accuracy and anti-spoofing capability — eliminates buddy punching entirely. High upfront cost, low ongoing friction. Raises privacy concerns with centralized biometric storage."
+          },
+          {
+            "title": "QR-based logins",
+            "filter": "On-site",
+            "icon": "qr_code",
+            "front_desc": "Time-limited QR codes scanned via phone or kiosk.",
+            "back_desc": "Low-cost deployment with optional geofencing to prevent off-site scanning. Codes can be shared via screenshot, limiting proof of presence."
+          },
+          {
+            "title": "Digital forms",
+            "filter": "Remote",
+            "icon": "description",
+            "front_desc": "Timestamped self-report submissions via web or app.",
+            "back_desc": "Asynchronous-friendly but relies on user honesty without secondary verification layer. No proof of physical presence at the declared location."
+          },
+          {
+            "title": "Video call check-ins",
+            "filter": "Remote",
+            "icon": "videocam",
+            "front_desc": "Live attendance verified through scheduled video sessions.",
+            "back_desc": "High proof of presence, bandwidth-dependent. Works well for synchronous remote instruction. Scalability limited by call capacity."
+          },
+          {
+            "title": "Photo evidence",
+            "filter": "Remote",
+            "icon": "photo_camera",
+            "front_desc": "Timestamped and geotagged selfies submitted at check-in.",
+            "back_desc": "Simple to deploy with metadata validation. Susceptible to pre-taken photos and GPS spoofing without additional checks."
+          },
+          {
+            "title": "Activity logs",
+            "filter": "Remote",
+            "icon": "monitor",
+            "front_desc": "System-generated records of logins, submissions, and interactions.",
+            "back_desc": "Passive collection and hard to spoof — ideal as a secondary verification layer. Cannot confirm identity of the person behind the screen."
+          }
+        ]
+      }
+    }
+  ]
+}
