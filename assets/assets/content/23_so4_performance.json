@@ -1,0 +1,64 @@
+{
+  "id": "testing_stage",
+  "title": "SO4 Test Protocol: System Performance & Operational Resilience",
+  "subtitle": "Latency, fault tolerance & factorial TPS",
+  "accentColor": "#7C3AED",
+  "sections": [
+    {
+      "id": "so4_performance",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "SO4 measures the system's end-to-end performance characteristics: how long enrollment and verification take, how much throughput IPFS integration costs, whether the system survives node failures, what the worst-case throughput floor looks like, whether all four nodes consume resources equally, and how ledger state accumulation affects performance over time."
+          },
+          {
+            "type": "prose",
+            "text": "The authentication time equation decomposes the total user-facing latency into three measurable stages. T_capture covers the physical biometric acquisition, the time from the user placing a finger on the scanner to the system completing both fingerprint and facial capture. T_inference covers the computational processing, template extraction, quality assessment, and the hierarchical fusion decision (fingerprint gate → face gate). T_chain covers the blockchain round-trip, anchoring the verification event on-chain and waiting for consensus finality. By measuring each stage independently, bottlenecks can be attributed to specific subsystems."
+          },
+          {
+            "type": "equation",
+            "label": "Authentication Time",
+            "formula": "T_auth = T_capture + T_inference + T_chain\n\n  T_capture   = T_fingerprint + T_face          (biometric acquisition)\n  T_inference = T_extraction  + T_fusion         (template generation + hierarchical gating)\n  T_chain     = T_anchoring                      (DID anchoring + consensus finality)",
+            "note": ""
+          },
+          {
+            "type": "prose",
+            "text": "To systematically explore the performance landscape, SO4-T7 employs a 2³ full factorial design, where 8 configurations are formed by crossing three binary factors. Each combination isolates the marginal impact of a single factor while controlling for the other two. For example, comparing wired+gas+IPFS against wireless+gas+IPFS isolates the effect of the network medium alone."
+          },
+          {
+            "type": "table",
+            "caption": "Factorial Design (2³ = 8 Configurations)",
+            "headers": [
+              "Factor",
+              "Level A",
+              "Level B"
+            ],
+            "rows": [
+              [
+                "Client Medium",
+                "Wired",
+                "Wireless"
+              ],
+              [
+                "Protocol Stage",
+                "Gas tracking ON",
+                "Gas tracking OFF"
+              ],
+              [
+                "IPFS State",
+                "With IPFS",
+                "Without IPFS"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The remaining SO4 tests each target a specific operational concern. SO4-T3 measures the throughput penalty of IPFS integration by comparing TPS with and without the storage sidecar active. SO4-T4 verifies fault tolerance by killing one node (f=1) and confirming that the remaining 3-node quorum continues producing blocks, then measuring recovery time and hash consistency upon rejoin. SO4-T5 establishes the performance floor: the minimum throughput achievable under worst-case conditions (wireless, gas tracking enabled, IPFS active). SO4-T6 checks resource consistency by computing the coefficient of variation of CPU and memory usage across all 4 nodes. SO4-T8 measures state overhead by comparing enrollment TPS on a fresh genesis ledger against a ledger pre-filled with existing records."
+          }
+        ]
+      }
+    }
+  ]
+}

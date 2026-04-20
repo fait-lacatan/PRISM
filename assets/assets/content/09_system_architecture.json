@@ -1,0 +1,411 @@
+{
+  "id": "design_stage",
+  "title": "Software Architecture",
+  "subtitle": "From capture to on-chain trust",
+  "accentColor": "#38BDF8",
+  "sections": [
+    {
+      "template": "system_map",
+      "data": {
+        "flowchart_nodes": [
+          {
+            "id": "start",
+            "label": "Start",
+            "type": "terminal",
+            "col": 2,
+            "row": 0,
+            "desc": "The kiosk initialises a signed session token and prepares the sensor array. A trusted device context (device key + timestamp) is bound to every subsequent transaction in this session.",
+            "next": [
+              {
+                "target": "fingerprint_capture"
+              }
+            ]
+          },
+          {
+            "id": "fingerprint_capture",
+            "label": "Fingerprint\nCapture",
+            "type": "process",
+            "col": 2,
+            "row": 1,
+            "desc": "The capacitive scanner acquires a raw fingerprint image under controlled illumination. Quality metrics (NFIQ-2) must exceed the threshold before proceeding.",
+            "next": [
+              {
+                "target": "feature_extraction"
+              }
+            ]
+          },
+          {
+            "id": "feature_extraction",
+            "label": "Feature\nExtraction",
+            "type": "process",
+            "col": 2,
+            "row": 2,
+            "desc": "DeepPrint processes the raw fingerprint image into a fixed-length texture feature vector. This compact representation preserves discriminative power while enabling error-tolerant reconstruction via fuzzy extraction.",
+            "next": [
+              {
+                "target": "cancelable_transform"
+              }
+            ]
+          },
+          {
+            "id": "cancelable_transform",
+            "label": "Cancelable\nTransformation",
+            "type": "process",
+            "col": 2,
+            "row": 3,
+            "desc": "An irreversible, parameterised transformation is applied to fingerprint features. The transformation key can be rotated during reissuance, generating an entirely new representation from the same biometric — this is the cancelability property.",
+            "next": [
+              {
+                "target": "fuzzy_extraction"
+              }
+            ]
+          },
+          {
+            "id": "fuzzy_extraction",
+            "label": "Fuzzy Extraction\nVerification",
+            "type": "process",
+            "col": 2,
+            "row": 4,
+            "desc": "Enrollment: feature vector + random salt → Reed-Solomon ECC encodes k_V → outputs public helper string H. Verification: fresh scan + H → if Hamming distance within error tolerance → same codeword recovered → same k_V reconstructed. Neither k_V nor the raw fingerprint is ever stored.",
+            "next": [
+              {
+                "target": "face_capture"
+              }
+            ]
+          },
+          {
+            "id": "face_capture",
+            "label": "Face\nCapture",
+            "type": "process",
+            "col": 2,
+            "row": 5,
+            "desc": "The RGB camera captures a live facial frame. This triggers two parallel sub-processes: PAD liveness gating and EfficientNet+STL embedding generation.",
+            "next": [
+              {
+                "target": "liveness_check"
+              },
+              {
+                "target": "embedding_gen"
+              }
+            ]
+          },
+          {
+            "id": "liveness_check",
+            "label": "Liveness\nCheck",
+            "type": "decision",
+            "col": 1,
+            "row": 6,
+            "desc": "Binary live/spoof classification using a causal PAD model (Fang & Damer, 2023). Counterfactual intervention severs spurious correlations from the liveness decision. If spoof detected → pipeline halts immediately.",
+            "next": [
+              {
+                "target": "matching",
+                "label": "Pass"
+              },
+              {
+                "target": "blockchain_registry",
+                "label": "Fail",
+                "route": "fail_left"
+              }
+            ]
+          },
+          {
+            "id": "embedding_gen",
+            "label": "Embedding\nGeneration",
+            "type": "process",
+            "col": 3,
+            "row": 6,
+            "desc": "EfficientNet backbone trained with Secure Triplet Loss produces a cancelable facial embedding with three critical properties: discriminability, cancelability, and unlinkability. The STL embedder is parameterised by k_S, which lives inside the encrypted vault.",
+            "next": [
+              {
+                "target": "matching"
+              }
+            ]
+          },
+          {
+            "id": "ipfs",
+            "label": "IPFS\n(off-chain\nledger)",
+            "type": "storage",
+            "col": 4,
+            "row": 5,
+            "desc": "Kubo v0.21.0 private IPFS swarm. Encrypted biometric vaults are pinned across the swarm. Content-addressing means any modification produces a different CID — providing structural tamper-evidence. External participants are rejected at the transport layer.",
+            "next": [
+              {
+                "target": "blockchain_registry",
+                "label": "register encrypted\nCID/VCS",
+                "route": "down_over"
+              }
+            ]
+          },
+          {
+            "id": "matching",
+            "label": "Matching",
+            "type": "decision",
+            "col": 2,
+            "row": 7,
+            "desc": "The cancelable facial embedding from the live capture is compared against the decrypted vault embedding using L2 distance. If below the calibrated threshold → identity confirmed. If above → verification fails and is logged as a mismatch event.",
+            "next": [
+              {
+                "target": "blockchain_registry"
+              },
+              {
+                "target": "blockchain_registry",
+                "label": "Fail",
+                "route": "fail_left"
+              }
+            ]
+          },
+          {
+            "id": "blockchain_registry",
+            "label": "Blockchain\nRegistry Contact",
+            "type": "process",
+            "col": 2,
+            "row": 8,
+            "desc": "The smart contract layer (Registry.sol, Permissions.sol, Attendance.sol) records the transaction result. Only the CID and state transitions are anchored on-chain — never raw biometrics. The oracle attestation from the local kiosk accompanies each transaction.",
+            "next": [
+              {
+                "target": "end"
+              }
+            ]
+          },
+          {
+            "id": "end",
+            "label": "End",
+            "type": "terminal",
+            "col": 2,
+            "row": 9,
+            "desc": "Session terminates. A verifiable result has been emitted: DID lifecycle update, attendance proof, reissue state, or revocation confirmation.",
+            "next": []
+          }
+        ],
+        "sequence_diagram": {
+          "groups": [
+            {
+              "id": "local",
+              "label": "Local Device",
+              "color": "#6366F1",
+              "participantIds": [
+                "biometrics",
+                "backend",
+                "biovault",
+                "identity_agent"
+              ]
+            },
+            {
+              "id": "distributed",
+              "label": "Distributed Infra",
+              "color": "#F97316",
+              "participantIds": [
+                "ipfs",
+                "quorum"
+              ]
+            }
+          ],
+          "participants": [
+            {
+              "id": "user",
+              "label": "User"
+            },
+            {
+              "id": "biometrics",
+              "label": "Biometrics"
+            },
+            {
+              "id": "backend",
+              "label": "Backend\nLogic"
+            },
+            {
+              "id": "biovault",
+              "label": "Bio-Vault"
+            },
+            {
+              "id": "identity_agent",
+              "label": "Identity\nAgent"
+            },
+            {
+              "id": "ipfs",
+              "label": "IPFS"
+            },
+            {
+              "id": "quorum",
+              "label": "Quorum\nBlockchain"
+            }
+          ],
+          "messages": [
+            {
+              "step": 1,
+              "from": "user",
+              "to": "biometrics",
+              "label": "Interactions (Face/Finger)",
+              "type": "solid",
+              "desc": "The user initiates the session by providing biometric samples (a fingerprint scan and a facial capture) via the kiosk's sensor array."
+            },
+            {
+              "step": 2,
+              "from": "biometrics",
+              "to": "backend",
+              "label": "Raw Data Stream",
+              "type": "solid",
+              "desc": "Raw biometric data is streamed to the backend logic module for quality assessment, PAD liveness gating, and feature extraction."
+            },
+            {
+              "step": 3,
+              "from": "backend",
+              "to": "biovault",
+              "label": "Key Recovery / Encryption",
+              "type": "solid",
+              "desc": "The Security Core inside Bio-Vault performs fuzzy extraction to recover the vault key (k_V) from the fingerprint, then uses HKDF to derive the AES-GCM encryption/decryption key."
+            },
+            {
+              "step": 4,
+              "from": "biovault",
+              "to": "backend",
+              "label": "Status / Keys",
+              "type": "dashed",
+              "desc": "Bio-Vault returns the operation status and derived cryptographic keys. On enrollment, the vault ciphertext is produced. On verification, the decrypted facial embedding is released for L2 matching."
+            },
+            {
+              "step": 5,
+              "from": "backend",
+              "to": "identity_agent",
+              "label": "Request Anchoring",
+              "type": "solid",
+              "desc": "The backend packages the transaction payload (CID, state transition, oracle attestation) and forwards it to the Identity Agent for on-chain submission."
+            },
+            {
+              "step": 6,
+              "from": "identity_agent",
+              "to": "ipfs",
+              "label": "Pin Profile / VCs",
+              "type": "solid",
+              "desc": "The Identity Agent pins the encrypted biometric vault and Verifiable Credentials to the private IPFS swarm. Pin confirmation across the swarm is required before the on-chain transaction proceeds."
+            },
+            {
+              "step": 7,
+              "from": "ipfs",
+              "to": "identity_agent",
+              "label": "Return CID",
+              "type": "dashed",
+              "desc": "IPFS returns the content-addressed CID for the pinned vault. This CID becomes the on-chain reference. Any vault modification would produce a different CID, providing structural tamper-evidence."
+            },
+            {
+              "step": 8,
+              "from": "identity_agent",
+              "to": "quorum",
+              "label": "Submit Transaction (CID)",
+              "type": "solid",
+              "desc": "The Identity Agent submits the smart contract transaction to the Quorum blockchain. The transaction includes the CID, DID state transition, and the kiosk's oracle attestation signature."
+            },
+            {
+              "step": 9,
+              "from": "quorum",
+              "to": "identity_agent",
+              "label": "Transaction Receipt",
+              "type": "dashed",
+              "desc": "Once QBFT consensus is reached across the validator ring, the blockchain returns a transaction receipt confirming the immutable on-chain record. The session result propagates back to the user."
+            }
+          ]
+        },
+        "transaction_pipelines": [
+          {
+            "label": "Enroll",
+            "inputs": [
+              "Fingerprint scan (B)",
+              "Facial image (X)",
+              "Private key (k_priv)",
+              "Environment metadata"
+            ],
+            "process": [
+              "Feature extraction from B",
+              "Vault key generation (k_V)",
+              "Fuzzy extraction + hierarchical key encryption",
+              "Triplet-loss embedding for X",
+              "Oracle attestation + smart contract execution"
+            ],
+            "outputs": [
+              "Cancelable facial embedding",
+              "Encrypted biometric vault",
+              "Minted DID",
+              "infoCID anchored on-chain"
+            ]
+          },
+          {
+            "label": "Record",
+            "inputs": [
+              "Fresh fingerprint scan (B')",
+              "Fresh facial image (X')",
+              "Session ID"
+            ],
+            "process": [
+              "PAD liveness on X'",
+              "Recover k_V via fuzzy extraction from B'",
+              "Unlock vault and apply STL transform",
+              "Signature validation + oracle attestation",
+              "Attendance contract execution"
+            ],
+            "outputs": [
+              "Attendance record",
+              "Self-sovereign attendance proof"
+            ]
+          },
+          {
+            "label": "Reissue",
+            "inputs": [
+              "Fingerprint scan (B)",
+              "Facial image (X)",
+              "Private key (k_priv)",
+              "Enrolled metadata + enrolled DID",
+              "User signature"
+            ],
+            "process": [
+              "Re-run feature extraction + vault key generation",
+              "Re-encrypt vault with fresh salt and orthogonal key",
+              "Oracle attestation + contract reissue transition"
+            ],
+            "outputs": [
+              "New cancelable facial embedding",
+              "Updated secure vault",
+              "New infoCID and reissued DID state"
+            ]
+          },
+          {
+            "label": "Revoke",
+            "inputs": [
+              "User on-chain address",
+              "User signature"
+            ],
+            "process": [
+              "Two-phase permissioned contract call",
+              "Registry validity flip and status propagation"
+            ],
+            "outputs": [
+              "Revocation confirmation",
+              "Address invalid for future verification"
+            ]
+          }
+        ],
+        "distributed_topology": {
+          "nodes": [
+            {
+              "label": "Node 1",
+              "role": "Validator + IPFS"
+            },
+            {
+              "label": "Node 2",
+              "role": "Validator + IPFS"
+            },
+            {
+              "label": "Node 3",
+              "role": "Validator + IPFS"
+            },
+            {
+              "label": "Node 4",
+              "role": "Validator + IPFS"
+            }
+          ],
+          "note": "Four validator nodes operate in a QBFT ring. Each node runs a blockchain validator and IPFS sidecar, while kiosk devices act as biometric oracles that sign and submit transactions via RPC.",
+          "tri_service": "Per-node tri-service layout: AI Service handles PAD and feature extraction, Consensus Validator (QBFT) handles block/contract execution, and IPFS Sidecar stores encrypted vault artifacts. CPU affinity isolates validator scheduling from inference spikes."
+        }
+      }
+    }
+  ]
+}

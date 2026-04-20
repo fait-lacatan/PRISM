@@ -1,0 +1,88 @@
+{
+  "id": "testing_stage",
+  "title": "SO2 Test Protocol: Blockchain Integrity & Scalability",
+  "subtitle": "Gas determinism, consensus & scalability",
+  "accentColor": "#7C3AED",
+  "sections": [
+    {
+      "id": "so2_blockchain",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "SO2 validates the Quorum QBFT permissioned ledger across four dimensions: gas determinism, consensus correctness, throughput scaling, and hardware resource behavior."
+          },
+          {
+            "type": "prose",
+            "text": "A critical part of SO2 is verifying that the blockchain behaves correctly under adversarial conditions. Three fault injection scenarios were executed on the live 4-node cluster by deliberately crashing, disconnecting, or partitioning nodes. Each scenario tests a different failure mode from the BFT literature: crash faults (fail-stop), omission faults (silent node), and network partitions (symmetric split). The table below summarizes each scenario, its injection method, and the expected observation."
+          },
+          {
+            "type": "table",
+            "caption": "QBFT Fault Injection Scenarios",
+            "headers": [
+              "Scenario",
+              "Fault Model",
+              "Injection Method",
+              "Observation"
+            ],
+            "rows": [
+              [
+                "Crash Tolerance",
+                "Fail-stop (process terminated)",
+                "Docker container halted",
+                "Block progression; post-recovery re-sync"
+              ],
+              [
+                "Liveness",
+                "Silent node (omission)",
+                "Container network-disconnected",
+                "Isolated node stall; post-reconnect re-sync"
+              ],
+              [
+                "Safety",
+                "Symmetric 2-2 network partition",
+                "Dual-node isolation",
+                "Block halt on both sides; post-heal convergence"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "Gas determinism (SO2-T1) verifies that each smart contract operation consumes a fixed, predictable amount of gas regardless of when or how many times it is invoked. The Coefficient of Variation normalizes gas consumption variance to the mean, where a CV near zero confirms that the system is metering costs deterministically rather than varying with chain state or block timing."
+          },
+          {
+            "type": "equation",
+            "label": "Coefficient of Variation (Gas Determinism)",
+            "formula": "CV = σ / μ",
+            "note": "Normalizes dispersion to the mean; allows cross-workload comparison."
+          },
+          {
+            "type": "prose",
+            "text": "Throughput scaling (SO2-T3) tests whether the system's observed transaction throughput increases proportionally with the send-rate up to the point where the consensus mechanism becomes the bottleneck. The Coefficient of Determination (R²) quantifies this proportionality: an R² close to 1.0 in the pre-saturation region confirms linear scaling, while a sharp R² drop identifies the saturation knee."
+          },
+          {
+            "type": "equation",
+            "label": "Coefficient of Determination (Scaling)",
+            "formula": "R² = 1 − (SS_res / SS_tot)",
+            "note": "Quantifies proportionality between send-rate and observed throughput."
+          },
+          {
+            "type": "prose",
+            "text": "Two tests, consisting of Consensus Ceiling (SO2-T4) and Medium Agnosticism (SO2-T5), require comparing independent groups of throughput observations. The Mann–Whitney U test is used instead of the independent-samples t-test because throughput distributions under saturation are typically skewed. SO2-T4 uses it to compare ingestion-phase TPS against consensus-phase TPS, confirming the serialization bottleneck. SO2-T5 uses it to confirm that wired and wireless mediums produce statistically equivalent throughput."
+          },
+          {
+            "type": "equation",
+            "label": "Mann–Whitney U (Consensus Ceiling & Medium Agnosticism)",
+            "formula": "U = n₁n₂ + [n₁(n₁+1)/2] − R₁",
+            "note": ""
+          },
+          {
+            "type": "prose",
+            "text": "Hardware metrics (SO2-T6 through SO2-T8) are interpreted descriptively; no inferential test is applied. Their purpose is to confirm that hardware is not the binding constraint at the consensus-limited throughput ceiling. Peak CPU utilization, memory headroom, GC stop-the-world pause durations, heap growth trends, and disk/network I/O utilization are reported to rule out hardware bottlenecks."
+          }
+        ]
+      }
+    }
+  ]
+}

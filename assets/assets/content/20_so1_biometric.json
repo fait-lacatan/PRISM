@@ -1,0 +1,147 @@
+{
+  "id": "testing_stage",
+  "title": "SO1 Test Protocol: Biometric Subsystem Validation",
+  "subtitle": "Embedding accuracy, template privacy & hierarchical fusion",
+  "accentColor": "#7C3AED",
+  "sections": [
+    {
+      "id": "so1_biometric",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "SO1 validates the cancelable multimodal-hierarchical biometric subsystem across five dimensions: embedding accuracy, template privacy, quality stratification, hierarchical fusion, and live operational correctness. Each test isolates one layer of the biometric stack so that a failure in, for example, fingerprint quality gating does not mask a success in facial embedding accuracy."
+          },
+          {
+            "type": "prose",
+            "text": "Three datasets of different sizes and conditions feed these tests. For face verification, 5,000 triplets were generated per backbone condition (C1–C4), drawn from 10 subjects with 60 samples each. For fingerprint verification, 50 users contributed 10 samples each, yielding 50 genuine pairs and 2,450 impostor trials. The live cohort test exercised the complete deployed pipeline: 200 cross-node genuine verification attempts plus 50 deliberate presentation attacks (spoofing attempts)."
+          },
+          {
+            "type": "prose",
+            "text": "The backbone conditions below represent a 2×2 matrix of backbone architecture and training dataset. By comparing InceptionResNetV1 against EfficientNet-B0 on both the external YouTube Faces Database (YTFDB) and the locally collected institutional dataset, the test protocol isolates whether accuracy improvements come from the backbone upgrade, from domain-specific fine-tuning, or from their interaction."
+          },
+          {
+            "type": "table",
+            "caption": "Backbone Conditions",
+            "headers": [
+              "Condition",
+              "Backbone",
+              "Dataset"
+            ],
+            "rows": [
+              [
+                "C1",
+                "InceptionResNetV1",
+                "YTFDB"
+              ],
+              [
+                "C2",
+                "EfficientNet-B0",
+                "YTFDB"
+              ],
+              [
+                "C3",
+                "InceptionResNetV1",
+                "Local"
+              ],
+              [
+                "C4",
+                "EfficientNet-B0",
+                "Local"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The equations below are the statistical tools used across SO1's eight tests. Each is tied to a specific measurement need, from quantifying fingerprint template quality to testing whether cancelable templates are truly unlinkable across different transformation salts."
+          },
+          {
+            "type": "prose",
+            "text": "The Voting Ratio serves as a quality proxy for the fingerprint fuzzy vault. During extraction, each locker either votes for a match (1) or not (0). The ratio of successful votes to total lockers acts as a confidence score. A high V_ratio indicates a clean, high-quality sample, while low V_ratio flags a noisy or partial scan. This metric is used in SO1-T6 to partition samples into quality tiers."
+          },
+          {
+            "type": "equation",
+            "label": "Voting Ratio (V_ratio)",
+            "formula": "V_ratio = (Σ vᵢ) / L,   where vᵢ ∈ {0, 1}",
+            "note": "Quality proxy for fingerprint template; partitions samples into high/low strata."
+          },
+          {
+            "type": "prose",
+            "text": "Jensen-Shannon Divergence measures how well the system separates genuine users from impostors. If the genuine score distribution and the impostor score distribution overlap heavily, JSD is low and the system cannot reliably distinguish users. A high JSD means clean separation. This metric is checked against V_ratio in SO1-T6 using Spearman correlation, confirming that higher template quality leads to better impostor separation."
+          },
+          {
+            "type": "equation",
+            "label": "Jensen-Shannon Divergence",
+            "formula": "JSD(G ‖ I) = ½ D_KL(G ‖ M) + ½ D_KL(I ‖ M),   M = ½(G + I)",
+            "note": "Measures separability between genuine (G) and impostor (I) score distributions."
+          },
+          {
+            "type": "prose",
+            "text": "The core biometric error metrics (FMR, FNMR, and EER) quantify the system's operational accuracy. FMR is the rate at which impostors are incorrectly accepted; FNMR is the rate at which genuine users are incorrectly rejected. EER is the threshold at which these two rates are equal, providing a single-number summary of biometric accuracy. These three metrics are used across SO1-T1 through SO1-T8."
+          },
+          {
+            "type": "equation",
+            "label": "False Match Rate",
+            "formula": "FMR = Number of False Matches / Total Impostor Comparisons",
+            "note": ""
+          },
+          {
+            "type": "equation",
+            "label": "False Non-Match Rate",
+            "formula": "FNMR = Number of False Non-Matches / Total Genuine Comparisons",
+            "note": ""
+          },
+          {
+            "type": "equation",
+            "label": "Equal Error Rate",
+            "formula": "EER: τ* such that FMR(τ*) = FNMR(τ*)",
+            "note": ""
+          },
+          {
+            "type": "prose",
+            "text": "Template unlinkability is a privacy requirement specific to cancelable biometrics. When the same user's template is transformed with different salts, the resulting cancelable representations must be statistically indistinguishable from templates belonging to different users. The ISO/IEC 30136 D_sys metric quantifies this: a value near 0 means no information leaks across transformations. This is tested in SO1-T4."
+          },
+          {
+            "type": "equation",
+            "label": "ISO/IEC 30136 D_sys (Unlinkability)",
+            "formula": "D_sys(s) = [P(s|Hₘ) − P(s|Hₙ)] / max(P(s|Hₘ), P(s|Hₙ))",
+            "note": "D_sys ≈ 0 → perfect unlinkability."
+          },
+          {
+            "type": "prose",
+            "text": "Three inferential tools are used to compare conditions. The Wilcoxon Signed-Rank test is a non-parametric alternative to the paired t-test, used in SO1-T1 and SO1-T2 when the normality assumption cannot be guaranteed. Cohen's d provides a standardized effect size, as in how large the improvement actually is, not just whether it is statistically significant. Spearman's rank correlation measures the monotonic relationship between V_ratio and impostor separation (JSD) in SO1-T6."
+          },
+          {
+            "type": "equation",
+            "label": "Wilcoxon Signed-Rank Test",
+            "formula": "W = Σ [sgn(x₂ᵢ − x₁ᵢ) · Rᵢ]",
+            "note": ""
+          },
+          {
+            "type": "equation",
+            "label": "Pooled Cohen's d",
+            "formula": "d = (x̄₁ − x̄₂) / sₚ,   sₚ = √[((n₁−1)s₁² + (n₂−1)s₂²) / (n₁+n₂−2)]",
+            "note": ""
+          },
+          {
+            "type": "equation",
+            "label": "Spearman Rank Correlation",
+            "formula": "ρ = 1 − (6Σdᵢ²) / [n(n²−1)]",
+            "note": ""
+          },
+          {
+            "type": "prose",
+            "text": "Finally, because live cohort outcomes are binary (match or non-match), confidence intervals on FMR and FNMR are computed using the Clopper–Pearson exact method rather than a normal approximation. This avoids the liberal coverage issues of the Wald interval when event counts are small — which is the expected case for a well-performing biometric system (few false matches)."
+          },
+          {
+            "type": "equation",
+            "label": "Clopper–Pearson Exact CI",
+            "formula": "CI = [B(α/2; x, n−x+1),  B(1−α/2; x+1, n−x)]",
+            "note": "Used for all live cohort binary outcome proportions."
+          }
+        ]
+      }
+    }
+  ]
+}

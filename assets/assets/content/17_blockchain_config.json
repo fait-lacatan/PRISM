@@ -1,0 +1,86 @@
+{
+  "id": "development_stage",
+  "title": "Blockchain Configuration",
+  "subtitle": "Genesis parameters & cryptographic hierarchy",
+  "accentColor": "#00A3FF",
+  "sections": [
+    {
+      "id": "bc_config",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The genesis block pre-funded four service accounts (one for each node) with sufficient balance for the full test workload. Validator enode identities were listed in the QBFT extraData field of the genesis block, establishing the initial authorized validator set without a separate governance transaction."
+          },
+          {
+            "type": "table",
+            "caption": "Blockchain Parameters",
+            "headers": [
+              "Parameter",
+              "Value"
+            ],
+            "rows": [
+              [
+                "Consensus Algorithm",
+                "QBFT (Istanbul BFT variant)"
+              ],
+              [
+                "Block Interval",
+                "2 seconds"
+              ],
+              [
+                "Validator Count (n)",
+                "4"
+              ],
+              [
+                "Fault Tolerance (f)",
+                "1"
+              ],
+              [
+                "Quorum Requirement",
+                "3 of 4 nodes"
+              ],
+              [
+                "Gas Price",
+                "0 (private network)"
+              ],
+              [
+                "Gas Limit",
+                "Configured to accommodate cryptographic-heavy operations"
+              ],
+              [
+                "Genesis Funding",
+                "Service accounts pre-funded in genesis block"
+              ],
+              [
+                "Node Discovery",
+                "Static IPv4 binding; enode identifiers allow-listed in Permissions.sol"
+              ],
+              [
+                "Transaction Pool",
+                "Per-node mempool; auto-flushed via QBFT round-change on reconnection"
+              ],
+              [
+                "Kiosk Binding",
+                "Registry.sol — registerKioskEnode() enforces 1:1 enode-to-wallet binding"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "At first boot, registerKioskEnode() was called once per node from the owner account, binding each node's Ethereum signing wallet to its enode identifier in Registry.sol. The revokeKioskEnode() counterpart was tested during the fault-injection scenario."
+          },
+          {
+            "type": "prose",
+            "text": "The key hierarchy derived at runtime from the hardware root seed. The top level was the fuzzy extractor output, a reconstructed secret produced from the live fingerprint scan. HKDF-SHA256 was applied with three distinct context labels, producing three isolated sub-keys: (a) the Fernet vault key for encrypting the facial embedding at rest, (b) the AES-GCM payload key for signing attendance envelopes before IPFS pinning, and (c) the IPFS swarm key derivation seed. No sub-key was ever written to disk in plaintext; each was held in memory only for the duration of the operation that required it."
+          },
+          {
+            "type": "prose",
+            "text": "All user DIDs followed the did:ethr method, resolving to the format did:ethr:0x[address]. No external DID resolver was required; the Registry.sol contract served as the sole resolution endpoint within the permissioned network."
+          }
+        ]
+      }
+    }
+  ]
+}

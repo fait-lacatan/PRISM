@@ -1,0 +1,182 @@
+{
+  "id": "summary,_conclusions,_and_recommendations",
+  "title": "Summary, Conclusions & Recommendations",
+  "subtitle": "Findings, verdicts & future directions",
+  "accentColor": "#8B5CF6",
+  "sections": [
+    {
+      "id": "capstone",
+      "template": "summary_capstone",
+      "data": {
+        "findings": [
+          {
+            "so": "SO1",
+            "text": "Domain-specific EfficientNet-B0 fine-tuning (Secure Triplet Loss) produced a statistically significant face recognition improvement.",
+            "metric": "EER: 26.32% → 9.33% on local dataset"
+          },
+          {
+            "so": "SO1",
+            "text": "ISO/IEC 30136 unlinkability satisfied only after deployment-domain adaptation; public-dataset-only models did not comply.",
+            "metric": "D_sys < 0.1 requires fine-tuning"
+          },
+          {
+            "so": "SO1",
+            "text": "Face recognition preserved discriminative capacity under variable environmental conditions.",
+            "metric": "FNMR = 0.00% in both controlled & uncontrolled settings"
+          },
+          {
+            "so": "SO1",
+            "text": "Hierarchical gate fusion reduced system FMR to 0.0000%; fingerprint gate blocked all impostors before face processing; cross-modal independence confirmed.",
+            "metric": "Hierarchical FMR = 0.0000% [0.00%, 0.15%]"
+          },
+          {
+            "so": "SO2",
+            "text": "Gas execution across all four smart contract operations was deterministic; no unbounded execution paths found.",
+            "metric": "CV: Record = 0.00% · Reissue = 5.68% (within threshold)"
+          },
+          {
+            "so": "SO2",
+            "text": "All 22 access control guards rejected adversarial transactions with EVM reverts; no unauthorized state change on deployed ledger.",
+            "metric": "22 / 22 guards passed"
+          },
+          {
+            "so": "SO4",
+            "text": "Enrollment latency dominated by scanning hardware, not software; sensor accounted for the majority of P95 total.",
+            "metric": "Sensor: ~38.6 s of 47.1 s P95 · AI + anchoring: 13.8 s"
+          },
+          {
+            "so": "SO4",
+            "text": "Verification latency acceptable for controlled entry.",
+            "metric": "Mean: 2.9 s · ~4–5 verifications/min at P50"
+          },
+          {
+            "so": "SO4",
+            "text": "IPFS throughput penalty in async ingestion mode is protocol-bound, not hardware-bound; negligible in consensus mode (absorbed by QBFT ceiling).",
+            "metric": "Ingestion penalty: −76.5% · Consensus penalty: ~0%"
+          },
+          {
+            "so": "H₀",
+            "text": "Firth's Penalized Logistic Regression confirmed a statistically significant Architecture × State interaction; DID resolution fails before biometric processing under revoked credentials.",
+            "metric": "Valid: 68.5% → Revoked: 0% · p = 6.02 × 10⁻³"
+          }
+        ],
+        "conclusions": [
+          {
+            "objective": "SO1",
+            "conclusion": "Multimodal-hierarchical biometric subsystem eliminates false accepts under live adversarial conditions and satisfies ISO/IEC 30136 unlinkability. Elevated FNMR (31.5%) is a deliberate and known cost of the conservative fingerprint gate operating point."
+          },
+          {
+            "objective": "SO2",
+            "conclusion": "Permissioned QBFT layer delivers deterministic execution, unanimous state consistency under fault injection, and scalable ingestion. The ~30 TPS consensus ceiling is an intrinsic protocol property."
+          },
+          {
+            "objective": "SO3",
+            "conclusion": "Smart contract guard surface rejects all tested adversarial vectors without exception. DID-as-addressing mechanism structurally prevents biometric template retrieval for revoked identities. Zero plaintext biometric exposure confirmed across all system layers."
+          },
+          {
+            "objective": "SO4",
+            "conclusion": "Integrated system operates within acceptable latency and resource bounds under live conditions. Consensus integrity survives crash fault injection with autonomous recovery. System remains viable under zero-infrastructure wireless deployment without performance degradation."
+          },
+          {
+            "objective": "H₀",
+            "conclusion": "H₀ rejected. Architecture × State interaction is statistically significant. Credential revocation in the proposed system prevents both unauthorized access and biometric template processing. In decoupled architectures, revocation has no effect on authorization outcome, a structural enforcement gap closed by hierarchical coupling at the data-path level."
+          }
+        ],
+        "recommendations": [
+          {
+            "id": "R1",
+            "title": "Fingerprint FNMR Reduction",
+            "priority": "Highest Priority",
+            "context": "FNMR of 31.50% is the most operationally significant limitation.",
+            "directions": [
+              "Investigate alternative Sample-Then-Lock parameterizations",
+              "Evaluate higher-fidelity fingerprint sensors",
+              "Develop adaptive quality thresholds to reduce genuine rejection rates"
+            ],
+            "applicability_table": []
+          },
+          {
+            "id": "R2",
+            "title": "Validator Scalability Assessment",
+            "priority": "",
+            "context": "DID/VC framework validated on a 4-node permissioned cluster.",
+            "directions": [
+              "Evaluate architecture under larger validator sets and higher simultaneous user populations",
+              "Characterize impact of validator count on QBFT finality latency",
+              "Systematically study on-chain nonce registry behavior under concurrent enrollment traffic"
+            ],
+            "applicability_table": []
+          },
+          {
+            "id": "R3",
+            "title": "IPFS Throughput Optimization",
+            "priority": "",
+            "context": "The −76.5% ingestion penalty in async mode is protocol-bound by per-object content-addressing overhead.",
+            "directions": [
+              "Evaluate content-addressed storage alternatives with batched pinning",
+              "Investigate lazy propagation or dedicated IPFS cluster configurations",
+              "Target recovery of ingestion throughput in burst enrollment scenarios without sacrificing off-chain storage guarantees"
+            ],
+            "applicability_table": []
+          },
+          {
+            "id": "R4",
+            "title": "Demographic & Environmental Generalizability",
+            "priority": "",
+            "context": "Study enrolled 50 participants from a single institutional context.",
+            "directions": [
+              "Replicate live cohort evaluation across demographically and environmentally diverse populations",
+              "Assess generalizability of operational FMR and FNMR values",
+              "Cross-institutional deployment to evaluate portability of permissioned network configuration and DID resolution mechanism"
+            ],
+            "applicability_table": []
+          },
+          {
+            "id": "R5",
+            "title": "Formal Cross-Contract Desynchronization Detection",
+            "priority": "",
+            "context": "Cross-contract desynchronization was detected and remediated during adversarial testing.",
+            "directions": [
+              "Investigate formal on-chain desynchronization detection mechanisms",
+              "Implement cross-contract consistency checks executed atomically within critical state transitions",
+              "Move from administrative remediation to structural prevention of the identified attack surface"
+            ],
+            "applicability_table": []
+          },
+          {
+            "id": "R6",
+            "title": "Cross-Domain Applicability",
+            "priority": "",
+            "context": "Architecture evaluated exclusively in an attendance monitoring context.",
+            "directions": [
+              "Evaluate credential-anchored template retrieval model across these modalities",
+              "Identify domain-specific adaptations required by different biometric capture environments and credential lifecycle policies"
+            ],
+            "applicability_table": [
+              {
+                "domain": "Physical access control",
+                "status": "✅ Direct"
+              },
+              {
+                "domain": "Border management",
+                "status": "✅ Direct"
+              },
+              {
+                "domain": "Remote identity proofing",
+                "status": "✅ Direct"
+              },
+              {
+                "domain": "Healthcare credentialing",
+                "status": "🔄 Adaptations required"
+              },
+              {
+                "domain": "Financial KYC",
+                "status": "🔄 Adaptations required"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

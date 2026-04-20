@@ -1,0 +1,366 @@
+{
+  "id": "engineering_challenges",
+  "title": "Challenges in Existing Methods & Their Solutions",
+  "subtitle": "How people cheat, what stops them, and what's still missing",
+  "accent_color": "#8F00FF",
+  "sections": [
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "The illusion of security",
+        "content": "Current systems produce records that cannot be completely trusted without additional safeguards implemented. Centralized databases present a single point of failure: a successful breach endangers the entire dataset at once, and records can be modified or erased without traceable evidence.\n\nToken-based and forms-based methods carry a similar weakness, where users can share their credentials for proxy submissions without triggering any alert in the system."
+      }
+    },
+    {
+      "template": "filterable_card_grid",
+      "data": {
+        "title": "Ways people cheat attendance",
+        "subtitle": "Tap to flip the card and reveal the attack impact",
+        "filters": [
+          "Vulnerabilities"
+        ],
+        "cards": [
+          {
+            "title": "Buddy Punching",
+            "filter": "Vulnerabilities",
+            "icon": "security",
+            "front_desc": "A colleague physically checks in on someone else's behalf using shared credentials.",
+            "back_desc": "The system logs a valid check-in. The absent teacher is recorded as present. No biometric = no barrier."
+          },
+          {
+            "title": "Impersonation",
+            "filter": "Vulnerabilities",
+            "icon": "lock",
+            "front_desc": "An attacker illicitly obtains another person's ID, PIN, or access card and authenticates at the terminal.",
+            "back_desc": "The system successfully authenticates the attacker as the victim. The victim's identity is compromised; records show them present when they weren't."
+          },
+          {
+            "title": "Presentation Attacks",
+            "filter": "Vulnerabilities",
+            "icon": "photo_camera",
+            "front_desc": "An attacker holds a printed photograph or video replay in front of a biometric sensor.",
+            "back_desc": "Without robust presentation attack detection (PAD), the system may accept the 2D photo as a real face. The biometric system is bypassed using a simple artifact."
+          },
+          {
+            "title": "Faking Timestamps",
+            "filter": "Vulnerabilities",
+            "icon": "schedule",
+            "front_desc": "An employee manipulates the device clock or intercepts network traffic before checking in.",
+            "back_desc": "The falsified timestamp is submitted to the server. Without blockchain's immutable ledger, the timestamp is trusted blindly and the check-in is accepted."
+          },
+          {
+            "title": "Record Tampering",
+            "filter": "Vulnerabilities",
+            "icon": "description",
+            "front_desc": "An insider with database access maliciously overwrites attendance records.",
+            "back_desc": "Absences are changed to present. In a centralized system without blockchain, there is no audit trail and no proof of tampering can be produced."
+          }
+        ]
+      }
+    },
+    {
+      "template": "solution_matrix",
+      "data": {
+        "title": "Attack → solution mapping",
+        "subtitle": "Blue = biometric solution, Violet = blockchain solution",
+        "attacks": [
+          "Presentation attacks",
+          "Impersonation",
+          "Faking timestamps",
+          "Buddy punching",
+          "Record tampering"
+        ],
+        "solutions": [
+          {
+            "label": "Biometric auth",
+            "color": "bio"
+          },
+          {
+            "label": "Blockchain auth",
+            "color": "chain"
+          }
+        ],
+        "matrix": [
+          [
+            true,
+            false
+          ],
+          [
+            true,
+            false
+          ],
+          [
+            false,
+            true
+          ],
+          [
+            true,
+            true
+          ],
+          [
+            false,
+            true
+          ]
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    },
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "Why biometrics are not enough",
+        "content": "Biometrics raise the bar for impersonation, but they do not eliminate it. Attackers can use printed photographs and video replay attacks to deceive sensors. While presentation attack detection (PAD) mechanisms mitigate this, they often fail against attacks captured under different environmental conditions.\n\nMachine learning has improved overall matching accuracy, and multimodal architectures take this further by requiring simultaneous successful presentation across two or more biometric modalities. However, each additional modality expands the attack surface proportionally. Because biometric traits are permanent and physiologically unchangeable, the compromise of a single template carries an indefinite and irrevocable privacy risk."
+      }
+    },
+    {
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "table",
+            "caption": "Biometric Modalities Comparison",
+            "headers": [
+              "Modality",
+              "Accuracy",
+              "Key Models",
+              "Main Strength"
+            ],
+            "rows": [
+              [
+                "Face",
+                "92–99%",
+                "ArcFace, Deep CNN",
+                "High inter-class variance"
+              ],
+              [
+                "Fingerprint",
+                "98–99%",
+                "DeepPrint, Minutiae",
+                "Physiological uniqueness"
+              ],
+              [
+                "Iris",
+                "≈ 95%",
+                "Vision Transformer",
+                "Highest temporal stability"
+              ],
+              [
+                "Voice",
+                "≈ 90%",
+                "CNN-LSTM Spectral",
+                "Passive, low hardware cost"
+              ],
+              [
+                "Ear",
+                "97–99%",
+                "SRC, PCA Reduction",
+                "Growth-invariant features"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "template": "fusion_pipeline",
+      "data": {
+        "title": "Fusion strategies",
+        "subtitle": "Select a fusion level to see where the two biometric streams are merged",
+        "levels": [
+          {
+            "name": "Sensor-level",
+            "description": "Raw sensor data from both modalities is combined before any feature extraction. Rarely used due to incompatible signal types, but maximally preserves information.",
+            "merge_at": 0
+          },
+          {
+            "name": "Feature-level",
+            "description": "Feature vectors extracted from both modalities are concatenated into a joint representation before matching. Highest accuracy potential, but requires compatible feature spaces and higher compute.",
+            "merge_at": 1
+          },
+          {
+            "name": "Score-level",
+            "description": "Each modality independently produces a match score; scores are combined via sum, product, or max rules. Most common — balances accuracy and modularity.",
+            "merge_at": 2
+          },
+          {
+            "name": "Decision-level",
+            "description": "Each modality makes its own binary accept/reject decision; a majority vote or AND/OR rule produces the final result. Most modular, lowest compute.",
+            "merge_at": 3
+          }
+        ],
+        "combos": [
+          {
+            "name": "Face + Fingerprint",
+            "accuracy": "92–100%",
+            "meta": "Parallel · Decision / Score"
+          },
+          {
+            "name": "Face + Ear",
+            "accuracy": "92–99%",
+            "meta": "Parallel · Feature-level"
+          },
+          {
+            "name": "Face + Voice",
+            "accuracy": "94–98%",
+            "meta": "Parallel · Score-level"
+          },
+          {
+            "name": "Face + Iris + Gait",
+            "accuracy": "94%",
+            "meta": "Parallel · Feature-fusion"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    },
+    {
+      "template": "privacy_explainer",
+      "data": {
+        "title": "Privacy-preservation techniques",
+        "subtitle": "Tap a technique to see an animated explainer",
+        "techniques": [
+          {
+            "title": "Cancelable biometrics",
+            "subtitle": "Irreversible transform of raw template",
+            "flow_type": "cancel",
+            "description": "The raw biometric feature vector is passed through an irreversible, key-dependent transform (e.g. 3D Jigsaw, Secure Triplet Loss). If compromised, the key is revoked and a new template is generated — the original biometric is never exposed."
+          },
+          {
+            "title": "GAN synthetic templates",
+            "subtitle": "Generative protection at storage",
+            "flow_type": "gan",
+            "description": "A GAN's generator learns to produce biometric templates statistically indistinguishable from real ones. These synthetic templates replace raw templates in storage — if stolen, they cannot be reverse-engineered to recover the real biometric."
+          },
+          {
+            "title": "Zero-knowledge proofs",
+            "subtitle": "Prove identity without revealing data",
+            "flow_type": "zkp",
+            "description": "The user proves they possess a valid biometric credential without revealing the actual template. Using Groth16 or zkSNARK, the verifier receives cryptographic proof of identity — zero private data crosses the wire."
+          },
+          {
+            "title": "Homomorphic encryption",
+            "subtitle": "Match in encrypted domain",
+            "flow_type": "homo",
+            "description": "Biometric templates are encrypted using a homomorphic encryption scheme (e.g. BFV, CKKS). The server performs matching directly on the ciphertext — the plaintext template is never decrypted server-side."
+          },
+          {
+            "title": "Cryptographic key binding",
+            "subtitle": "Fuzzy commitment / extractor",
+            "flow_type": "crypto",
+            "description": "A fuzzy commitment or fuzzy extractor binds a cryptographic key to the biometric template at enrollment. At verification, the noisy biometric re-derives the same key if it matches."
+          }
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    },
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "A tension of properties",
+        "content": "To address the record integrity problem at its root, researchers have explored blockchain as an alternative to centralized databases. Because each block cryptographically links to the one before it, any attempt to modify information becomes immediately detectable across the distributed network. This completely mitigates the single point of failure risk.\n\nHowever, the immutability property of blockchain conflicts directly with the permanence characteristic of biometric traits. Any biometric commitment linked on-chain remains permanently accessible, even if the underlying biometric record is later compromised."
+      }
+    },
+    {
+      "template": "blockchain_table",
+      "data": {
+        "title": "Blockchain consensus protocols",
+        "protocols": [
+          {
+            "name": "Raft (CFT)",
+            "platform": "Quorum",
+            "finality": "deterministic",
+            "overhead": 30,
+            "best_for": "Trusted networks"
+          },
+          {
+            "name": "Proof of Authority",
+            "platform": "Private Ethereum",
+            "finality": "deterministic",
+            "overhead": 25,
+            "best_for": "High throughput"
+          },
+          {
+            "name": "BFT",
+            "platform": "Hyperledger Fabric",
+            "finality": "deterministic",
+            "overhead": 72,
+            "best_for": "Byzantine tolerance"
+          },
+          {
+            "name": "HAC",
+            "platform": "Custom (HAC chain)",
+            "finality": "deterministic",
+            "overhead": 85,
+            "best_for": "Post-quantum + MPC"
+          },
+          {
+            "name": "Proof of Fair Chance",
+            "platform": "Ethereum",
+            "finality": "probabilistic",
+            "overhead": 55,
+            "best_for": "Energy-efficient"
+          }
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    },
+    {
+      "template": "markdown_prose",
+      "data": {
+        "title": "The structural gap in revocation",
+        "content": "Self-sovereign identity (SSI) frameworks and decentralized identifiers (DIDs) allow users to retain mathematical sovereignty over their identity. Verifiable credentials (VCs) then allow issuers to attach signed assertions, such as attendance records, to a user's DID, complete with on-chain status mechanisms for revocation.\n\nHowever, these revocation mechanisms fall short of enforcing revocation in any structural sense. On-chain status flags operate merely as verifier-side policy checks. They do not prevent the biometric pipeline from executing against the revoked identity's template, because the template's storage address remains independent of the DID and locatable regardless of credential state."
+      }
+    },
+    {
+      "template": "limitation_list",
+      "data": {
+        "title": "Current limitations",
+        "subtitle": "Key gaps in existing combined biometric + blockchain systems",
+        "items": [
+          {
+            "title": "No integrated cancelable transforms",
+            "description": "Multimodal biometric systems still expose raw templates — cancelable transformation mechanisms are rarely built in from the start."
+          },
+          {
+            "title": "Auditability vs. privacy trade-off unsolved",
+            "description": "Blockchain provides immutability but lacks a reliable protocol for anchoring cancelable templates without compromising biometric privacy."
+          },
+          {
+            "title": "Incomplete identity revocation support",
+            "description": "Smart contracts, DIDs, and VCs do not yet fully support coordinated revocation and re-issuance across all participating nodes."
+          },
+          {
+            "title": "On-site + remote gap remains unproven",
+            "description": "The combined effectiveness of cancelable biometrics, blockchain, and DID/VC management across both deployment modes remains unestablished."
+          }
+        ],
+        "sources": [
+          {
+            "label": "Saraswat et al., 2022",
+            "ref": "saraswat_2022"
+          }
+        ]
+      }
+    }
+  ]
+}

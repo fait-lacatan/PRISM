@@ -1,0 +1,128 @@
+{
+  "id": "testing_stage",
+  "title": "Hypothesis Test",
+  "subtitle": "2×2 factorial; credential-layer enforcement",
+  "accentColor": "#7C3AED",
+  "sections": [
+    {
+      "id": "hypothesis_test",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The hypothesis test is the sole inferential statistical test in the protocol. While SO1–SO4 characterize the system's behavior, this test evaluates the core architectural claim: that credential-layer enforcement makes biometric revocation structurally binding rather than merely a policy-level suggestion."
+          },
+          {
+            "type": "prose",
+            "text": "The problem is rooted in dual permanence. Blockchain records are immutable by design, and biometric features are permanent by nature. In a system that combines both, revoking access cannot rely on deleting either the on-chain anchor or the biometric template, as neither can be erased. Without architectural enforcement, a compromised biometric anchor remains historically accessible and cryptographically verifiable even after the credential is nominally revoked."
+          },
+          {
+            "type": "prose",
+            "text": "The proposed system addresses this through its DID architecture. The DID is not merely a label; it is the addressing mechanism for biometric template retrieval. The enrollment template is encrypted under a key derived from the fingerprint fuzzy vault, and the retrieval path requires resolving an active credential through the smart contract. If the credential is revoked, the smart contract reverts before the biometric pipeline is even invoked. This makes credential bypass a data-path impossibility, not merely a policy violation."
+          },
+          {
+            "type": "prose",
+            "text": "The experimental design below is a 2×2 factorial that crosses two factors: Architecture (Parallel Fusion baseline vs. Proposed System) and Credential State (Active vs. Revoked). Cell A represents the baseline under normal operation: a parallel fusion system with an active credential, where biometric scores alone determine access. Cell B is the critical baseline failure case: the same system after revocation, demonstrating that the biometric layer is structurally unaware of the credential state change. Cells C and D test the proposed system: C confirms normal operation under hierarchical gating, while D demonstrates the structural enforcement: the smart contract reverts, making the biometric pipeline unreachable."
+          },
+          {
+            "type": "table",
+            "caption": "2×2 Factorial Design",
+            "headers": [
+              "Cell",
+              "Architecture",
+              "Credential State",
+              "Data Source",
+              "Implication"
+            ],
+            "rows": [
+              [
+                "A",
+                "Parallel Fusion",
+                "Active",
+                "Genuine score arrays (local dataset)",
+                "Score threshold determines access; no credential check"
+              ],
+              [
+                "B",
+                "Parallel Fusion",
+                "Revoked",
+                "Separate random sample, same genuine arrays",
+                "Biometric layer structurally unaware of revocation"
+              ],
+              [
+                "C",
+                "Proposed System",
+                "Active",
+                "Live cohort verification data",
+                "Credential resolves; decision subject to hierarchical gate"
+              ],
+              [
+                "D",
+                "Proposed System",
+                "Revoked",
+                "Live cohort verification data",
+                "Smart contract reverts; biometric pipeline unreachable by design"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The dependent variable is the Authorization Decision Outcome, which is a binary indicator (1 = access granted, 0 = access denied). Each cell contains n = 200 observations for balanced comparison. The parallel fusion baseline uses score-level fusion at α = 0.5, weighting fingerprint and face scores equally."
+          },
+          {
+            "type": "prose",
+            "text": "The critical comparison is the Architecture × Credential State interaction. If the proposed system's advantage is merely better biometric accuracy, both architectures would show similar degradation upon revocation. But if the proposed system shows a qualitatively different response, as in zero grants in Cell D due to structural enforcement, vs. continued grants in Cell B, then the interaction effect confirms the architectural claim."
+          },
+          {
+            "type": "prose",
+            "text": "Two robustness analyses guard against confounds. The Fusion Parameter Sweep re-runs the entire 2×2 design at three different baseline fusion weights (α = 0.3, 0.5, 0.7) with independent samples per weight, confirming that the interaction effect holds regardless of how the baseline fusion is tuned. The Clustering Sensitivity analysis addresses the non-independence inherent in 50 users contributing 4 attempts each. Three bounding scenarios collapse the data to per-user outcomes under worst-case, moderate, and best-case clustering assumptions."
+          },
+          {
+            "type": "table",
+            "caption": "Robustness Analyses",
+            "headers": [
+              "Analysis",
+              "Method",
+              "Purpose"
+            ],
+            "rows": [
+              [
+                "Fusion Parameter Sweep",
+                "α ∈ {0.3, 0.5, 0.7}; independent samples per α",
+                "Confirm interaction holds across baseline weights"
+              ],
+              [
+                "Clustering Sensitivity",
+                "Per-user collapse under 3 bounding scenarios",
+                "Address non-independence of 50 users × 4 attempts"
+              ]
+            ]
+          },
+          {
+            "type": "table",
+            "caption": "Clustering Scenarios",
+            "headers": [
+              "Scenario",
+              "Description"
+            ],
+            "rows": [
+              [
+                "Worst-case",
+                "All rejections concentrated in users who failed every attempt"
+              ],
+              [
+                "Moderate",
+                "A portion of users failed all attempts"
+              ],
+              [
+                "Best-case",
+                "No user failed all attempts"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

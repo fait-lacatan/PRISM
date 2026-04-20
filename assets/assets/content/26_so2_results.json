@@ -1,0 +1,327 @@
+{
+  "id": "results_and_discussion",
+  "title": "SO2 Results",
+  "subtitle": "Gas determinism, consensus & throughput scaling",
+  "accentColor": "#10B981",
+  "sections": [
+    {
+      "id": "so2_results",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "SO2 verifies deterministic execution, consensus consistency, and institutional-scale throughput of the permissioned ledger that anchors all credential lifecycle operations. The results confirm that the blockchain layer behaves predictably, scales linearly until the consensus ceiling, and operates well within the commodity hardware's resource envelope."
+          },
+          {
+            "type": "prose",
+            "text": "Gas was profiled across 180 on-chain transactions spanning four smart contract operations. Two operations (Record and Revoke) achieved exactly zero variance (CV = 0.00%), reflecting their deterministic execution paths with no conditional branches. Enroll showed negligible variance (CV = 0.05%). Reissue had the highest variance at CV = 5.68%, which reflects its conditional state transitions: nonce updates, pending revocation checks, and variable storage slot writes depending on credential history."
+          },
+          {
+            "type": "table",
+            "caption": "Gas Determinism",
+            "headers": [
+              "Workload",
+              "Mean Gas",
+              "Std. Deviation",
+              "CV (%)",
+              "N"
+            ],
+            "rows": [
+              [
+                "Enroll",
+                "142,573",
+                "76",
+                "0.05",
+                "45"
+              ],
+              [
+                "Record",
+                "58,209",
+                "0",
+                "0.00",
+                "45"
+              ],
+              [
+                "Reissue",
+                "51,132",
+                "2,902",
+                "5.68",
+                "45"
+              ],
+              [
+                "Revoke",
+                "16,231",
+                "0",
+                "0.00",
+                "45"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "All workloads comply with the pre-registered CV thresholds: ≤5% for simple operations and ≤10% for conditional paths. This confirms that gas metering is deterministic: transaction costs are predictable and do not vary with chain state or block timing."
+          },
+          {
+            "type": "prose",
+            "text": "Consensus agreement was verified by comparing Merkle state roots across all 4 validator nodes under three BFT fault scenarios. In each scenario, the cluster was deliberately stressed (by halting a container, network-disconnecting a node, or partitioning the network into two equal halves) and then allowed to recover. Post-recovery, all nodes converged to identical state roots with no manual intervention."
+          },
+          {
+            "type": "table",
+            "caption": "Consensus Agreement Under BFT Scenarios",
+            "headers": [
+              "Scenario",
+              "Result"
+            ],
+            "rows": [
+              [
+                "Crash fault injection",
+                "State consistent post-recovery"
+              ],
+              [
+                "Continuous liveness under load",
+                "No divergence"
+              ],
+              [
+                "Deliberate safety divergence",
+                "Reconverged without intervention"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "QBFT maintains identical, uncorrupted world states across all participants. Any credential state change propagates in identical form to every node in the cluster."
+          }
+        ]
+      }
+    },
+    {
+      "id": "so2_bft_health_chart",
+      "template": "benchmark_chart",
+      "data": {
+        "chart_type": "bft_health",
+        "title": "BFT Health Under Fault Injection",
+        "subtitle": "Cluster state consistency under crash, liveness, and safety fault scenarios"
+      }
+    },
+    {
+      "id": "so2_results",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "API ingestion throughput was profiled per-workload across both wired and wireless mediums. The table below reports the linear regression slope (pre-saturation), R² fit, peak observed TPS, saturation knee, mean latency, and regression p-value for each combination. Pre-saturation R² values exceed 0.99 across all configurations, confirming near-perfect linear scaling up to the saturation point."
+          },
+          {
+            "type": "table",
+            "caption": "API Ingestion Per-Workload Summary",
+            "headers": [
+              "Medium",
+              "Workload",
+              "Slope",
+              "R²",
+              "Peak TPS",
+              "Sat. Knee",
+              "Mean Lat. (ms)",
+              "p-value"
+            ],
+            "rows": [
+              [
+                "Wired",
+                "Enroll",
+                "0.879",
+                "0.994",
+                "1,084.8",
+                "1,500",
+                "39",
+                "1.50 × 10⁻²¹"
+              ],
+              [
+                "Wired",
+                "Record",
+                "0.864",
+                "0.991",
+                "1,086.9",
+                "1,250",
+                "27",
+                "1.00 × 10⁻¹⁹"
+              ],
+              [
+                "Wired",
+                "Reissue",
+                "0.880",
+                "0.994",
+                "1,146.7",
+                "1,500",
+                "28",
+                "9.90 × 10⁻²²"
+              ],
+              [
+                "Wired",
+                "Revoke",
+                "0.893",
+                "0.997",
+                "1,192.9",
+                "1,500",
+                "27",
+                "4.63 × 10⁻²⁴"
+              ],
+              [
+                "Wired",
+                "Overall",
+                "0.879",
+                "0.995",
+                "1,192.9",
+                "1,500",
+                "30",
+                "2.75 × 10⁻²²"
+              ],
+              [
+                "Wireless",
+                "Enroll",
+                "0.879",
+                "0.995",
+                "1,070.8",
+                "1,500",
+                "47",
+                "8.53 × 10⁻²²"
+              ],
+              [
+                "Wireless",
+                "Record",
+                "0.855",
+                "0.990",
+                "986.8",
+                "1,250",
+                "54",
+                "2.35 × 10⁻¹⁹"
+              ],
+              [
+                "Wireless",
+                "Reissue",
+                "0.856",
+                "0.990",
+                "992.0",
+                "1,250",
+                "48",
+                "1.79 × 10⁻¹⁹"
+              ],
+              [
+                "Wireless",
+                "Revoke",
+                "0.887",
+                "0.996",
+                "1,060.2",
+                "1,500",
+                "44",
+                "7.10 × 10⁻²³"
+              ],
+              [
+                "Wireless",
+                "Overall",
+                "0.869",
+                "0.993",
+                "1,070.8",
+                "1,500",
+                "48",
+                "6.97 × 10⁻²¹"
+              ]
+            ]
+          },
+          {
+            "type": "equation",
+            "label": "Linear Scaling (Pre-Saturation, Reference Config)",
+            "formula": "TPS_actual = 0.879 · TPS_submitted,   R² = 0.9952,  p = 2.75 × 10⁻²²",
+            "note": "Saturation knee at 1,500 TPS. Peak ingestion: 1,192.9 TPS."
+          },
+          {
+            "type": "prose",
+            "text": "The ingestion-versus-consensus gap is 8.4× (Mann–Whitney U=144, p=3.66×10⁻⁵, Cohen's d=2.34, large effect). The consensus ceiling is an intentional security-first serialization constraint inherent to QBFT. Full-range R² (including the saturation region where linearity breaks down) is 0.931 for wired and 0.860 for wireless."
+          },
+          {
+            "type": "prose",
+            "text": "Medium agnosticism was confirmed: wired vs. wireless throughput showed no statistically significant difference (U=267, p=0.965, Cohen's d=0.05, negligible). Resource utilization across all 4 nodes remained well within hardware capacity. Mean CPU ranged from 6.7%–7.2%, with P95 at 21.9%–23.2% and a cross-node CV of only 3.3%."
+          }
+        ]
+      }
+    },
+    {
+      "id": "so2_network_medium_chart",
+      "template": "benchmark_chart",
+      "data": {
+        "chart_type": "network_medium",
+        "title": "Network Medium Impact",
+        "subtitle": "Throughput (TPS) vs. Target Load across Wired, Wireless, and Zero-Infra media (No IPFS)"
+      }
+    },
+    {
+      "id": "so2_results",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "table",
+            "caption": "Per-Node Resource Trace",
+            "headers": [
+              "Node",
+              "Peak CPU%",
+              "P95 CPU%",
+              "Mean CPU%",
+              "Peak Mem (MB)",
+              "GC Events",
+              "Max STW (ms)",
+              "GC Recl. Eff.%"
+            ],
+            "rows": [
+              [
+                "Node 1",
+                "67.4",
+                "22.9",
+                "7.2",
+                "1,076",
+                "1,697",
+                "15.0",
+                "36.1"
+              ],
+              [
+                "Node 2",
+                "62.9",
+                "22.9",
+                "7.1",
+                "1,006",
+                "1,643",
+                "17.0",
+                "35.6"
+              ],
+              [
+                "Node 3",
+                "57.9",
+                "23.2",
+                "7.1",
+                "943",
+                "1,325",
+                "22.0",
+                "36.1"
+              ],
+              [
+                "Node 4†",
+                "200.8",
+                "21.9",
+                "6.7",
+                "948",
+                "1,757",
+                "23.0",
+                "35.0"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "Node 4's peak CPU of 200.8% reflects a transient multi-core burst; its P95 confirms sustained utilization remains below 23%. Maximum GC stop-the-world pause was 23.0 ms (P99 = 0.203 ms — three orders of magnitude below the 2,000 ms QBFT block period). Disk write peaked at 9.23 MB/s against ~500 MB/s SSD capacity. Network peaked at 0.66 MB/s against 1 Gbps NIC capacity. CPU, GC, and I/O are each independently ruled out as bottleneck contributors."
+          }
+        ]
+      }
+    }
+  ]
+}

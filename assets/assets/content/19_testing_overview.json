@@ -1,0 +1,277 @@
+{
+  "id": "testing_stage",
+  "title": "Testing Framework",
+  "subtitle": "Tests across 4 specific objectives",
+  "accentColor": "#7C3AED",
+  "sections": [
+    {
+      "id": "testing_overview",
+      "template": "data_table",
+      "data": {
+        "blocks": [
+          {
+            "type": "prose",
+            "text": "The testing stage evaluates the deployed system against 4 Specific Objectives (SO) through 30 distinct tests across 3 execution categories. Unlike a single end-to-end acceptance test, this protocol isolates each subsystem (biometrics, blockchain, credential lifecycle, and system-level performance) so that failures can be attributed to specific layers rather than the system as a whole."
+          },
+          {
+            "type": "prose",
+            "text": "Tests for SO1–SO4 are system characterization protocols: they measure and describe the system's behavior under controlled conditions. A separate inferential hypothesis test validates the core architectural claim: that credential-layer enforcement makes revocation structurally binding rather than merely a policy suggestion."
+          },
+          {
+            "type": "prose",
+            "text": "The three execution categories reflect the nature of each test's data source. Programmatic tests reproduce results from pre-collected datasets independently of the live cluster. Blockchain benchmarks stress the consensus layer using a hybrid Caliper and custom Axios harness under a 2³ factorial design with ascending send-rates from 25 to 1,500 TPS. Live cohort tests exercise the full deployed pipeline with 50 real participants performing 200 cross-node genuine attempts and 50 presentation attacks."
+          },
+          {
+            "type": "table",
+            "caption": "Execution Categories",
+            "headers": [
+              "Category",
+              "Description"
+            ],
+            "rows": [
+              [
+                "Programmatic Tests",
+                "Run against pre-collected datasets; reproducible outputs independent of live cluster"
+              ],
+              [
+                "Blockchain Benchmarks",
+                "Hybrid Caliper + custom Axios harness; 2³ factorial design; ascending send-rates 25–1,500 TPS"
+              ],
+              [
+                "Live Cohort Tests",
+                "50 participants; 200 cross-node genuine attempts; 50 presentation attacks"
+              ]
+            ]
+          },
+          {
+            "type": "prose",
+            "text": "The table below maps every test to its parent objective, its purpose, and the statistical metric used to evaluate it. SO1 (8 tests) covers the biometric subsystem, from backbone selection to live cohort accuracy. SO2 (8 tests) covers blockchain integrity and scalability, from gas determinism to I/O bottleneck exclusion. SO3 (6 tests) covers credential lifecycle enforcement, from smart contract guards to biometric leakage audit. SO4 (8 tests) covers system-level performance, from enrollment latency to state overhead."
+          },
+          {
+            "type": "table",
+            "caption": "Test Protocol Map",
+            "headers": [
+              "SO",
+              "Test ID",
+              "Description",
+              "Purpose",
+              "Metric"
+            ],
+            "rows": [
+              [
+                "1",
+                "SO1-T1",
+                "Backbone Gain",
+                "EER improvement from backbone upgrade",
+                "Wilcoxon signed-rank, Paired t-test, Cohen's d"
+              ],
+              [
+                "1",
+                "SO1-T2",
+                "Architecture Comparison",
+                "InceptionResNet vs EfficientNet on YTFDB & Local",
+                "Wilcoxon signed-rank, Paired t-test, Cohen's d, 2×2 EER matrix"
+              ],
+              [
+                "1",
+                "SO1-T3",
+                "Environmental Impact",
+                "Finetuned model resistance to uncontrolled conditions",
+                "Paired t-test, Cohen's d"
+              ],
+              [
+                "1",
+                "SO1-T4",
+                "Template Unlinkability",
+                "Cancelable templates unlinkable across salts",
+                "ISO 30136 D_sys, Kolmogorov–Smirnov"
+              ],
+              [
+                "1",
+                "SO1-T5",
+                "Fingerprint Isolated Security",
+                "Fingerprint-only FMR",
+                "Clopper–Pearson 95% CI on FMR"
+              ],
+              [
+                "1",
+                "SO1-T6",
+                "Fingerprint Calibration",
+                "V_ratio as quality proxy for impostor separation",
+                "Spearman's ρ vs. Jensen-Shannon Divergence"
+              ],
+              [
+                "1",
+                "SO1-T7",
+                "Hierarchical FMR",
+                "Combined fingerprint + face gate FMR",
+                "FMR with V_ratio thresholding, Clopper–Pearson CI"
+              ],
+              [
+                "1",
+                "SO1-T8",
+                "Live Cohort Performance",
+                "Operational FNMR and FMR on deployed system",
+                "Per-node FNMR, Clopper–Pearson CI"
+              ],
+              [
+                "2",
+                "SO2-T1",
+                "Gas Determinism",
+                "Fixed gas costs across all contract operations",
+                "Variance analysis on avg. gas per workload"
+              ],
+              [
+                "2",
+                "SO2-T2",
+                "QBFT Hash Consistency",
+                "Node state agreement after finality",
+                "Merkle root comparison (4 nodes × 3 scenarios)"
+              ],
+              [
+                "2",
+                "SO2-T3",
+                "Linear Scaling",
+                "Ingestion scales linearly until saturation",
+                "Linear regression: send-rate vs. throughput"
+              ],
+              [
+                "2",
+                "SO2-T4",
+                "Consensus Ceiling",
+                "Serialization bottleneck: ingestion vs. consensus",
+                "Mann–Whitney U, Cohen's d"
+              ],
+              [
+                "2",
+                "SO2-T5",
+                "Medium Agnosticism",
+                "Wired vs. wireless throughput parity",
+                "Mann–Whitney U"
+              ],
+              [
+                "2",
+                "SO2-T6",
+                "CPU/Memory Saturation",
+                "Hardware not bottleneck at consensus TPS",
+                "Peak CPU, Memory headroom"
+              ],
+              [
+                "2",
+                "SO2-T7",
+                "GC Pressure",
+                "GC does not degrade consensus",
+                "STW pause duration, Heap growth trend"
+              ],
+              [
+                "2",
+                "SO2-T8",
+                "I/O Bottleneck Exclusion",
+                "I/O trivially low relative to capacity",
+                "Disk/network utilization"
+              ],
+              [
+                "3",
+                "SO3-T1",
+                "Full Guard Matrix",
+                "22 smart contract access control guards",
+                "Deterministic suite, 22 attack vectors"
+              ],
+              [
+                "3",
+                "SO3-T2",
+                "Consent Non-Repudiation",
+                "Consent vouchers require valid crypto signatures",
+                "Forged/malleable signature revert verification"
+              ],
+              [
+                "3",
+                "SO3-T3",
+                "Replay & Double-Spend",
+                "Nonces prevent replay and double-spend",
+                "Replayed voucher revert verification"
+              ],
+              [
+                "3",
+                "SO3-T4",
+                "Cross-Node Verification",
+                "Credentials enrolled on one node verify on all",
+                "Per-node FNMR/FMR from live cohort"
+              ],
+              [
+                "3",
+                "SO3-T5",
+                "Template Unlinkability",
+                "ISO 30136 unlinkability under production conditions",
+                "D_sys on production conditions"
+              ],
+              [
+                "3",
+                "SO3-T6",
+                "Biometric Leakage Audit",
+                "No raw biometrics at rest or in transit",
+                "Code audit: vault, IPFS, on-chain format"
+              ],
+              [
+                "4",
+                "SO4-T1",
+                "Enrollment Latency",
+                "E2E enrollment time",
+                "Mean, P50, P95 latency"
+              ],
+              [
+                "4",
+                "SO4-T2",
+                "Verification Latency",
+                "E2E verification time",
+                "Mean, P50, P95 latency"
+              ],
+              [
+                "4",
+                "SO4-T3",
+                "IPFS Integration Cost",
+                "Throughput penalty from IPFS storage",
+                "TPS ratio: no-IPFS vs. with-IPFS"
+              ],
+              [
+                "4",
+                "SO4-T4",
+                "Node Failure Resilience",
+                "System operates through f=1 crash fault",
+                "Block progression, recovery, hash consistency"
+              ],
+              [
+                "4",
+                "SO4-T5",
+                "Performance Floor",
+                "Minimum throughput under worst conditions",
+                "Peak and mean TPS at zero-infra wireless"
+              ],
+              [
+                "4",
+                "SO4-T6",
+                "Resource Consistency",
+                "All 4 nodes behave identically",
+                "Per-node CPU/memory CV"
+              ],
+              [
+                "4",
+                "SO4-T7",
+                "8-Config TPS Matrix",
+                "All 2³ factorial throughput combinations",
+                "Peak TPS per configuration"
+              ],
+              [
+                "4",
+                "SO4-T8",
+                "State Overhead",
+                "Empty vs. prefilled ledger impact",
+                "Enrollment TPS comparison"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
